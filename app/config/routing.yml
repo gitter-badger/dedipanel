@@ -25,6 +25,10 @@ DPMachineBundle:
 ApplicationSonataUserBundle:
     resource: "@ApplicationSonataUserBundle/Resources/config/routing.yml"
     prefix: /
+    
+DPMumbleServerBundle:
+    resource: "@DPMumbleServerBundle/Resources/config/routing.yml"
+    prefix:   /mumble
 
 _welcome:
     pattern: /

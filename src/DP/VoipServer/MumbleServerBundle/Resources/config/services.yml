@@ -1,0 +1,7 @@
+parameters:
+#    dp_mumble_server.example.class: DP\VoipServer\MumbleServerBundle\Example
+
+services:
+#    dp_mumble_server.example:
+#        class: %dp_mumble_server.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

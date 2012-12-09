@@ -1,0 +1,7 @@
+parameters:
+#    dp_voip_server.example.class: DP\VoipServer\VoipServerBundle\Example
+
+services:
+#    dp_voip_server.example:
+#        class: %dp_voip_server.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
