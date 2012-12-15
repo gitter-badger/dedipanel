@@ -14,6 +14,29 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-dp_mumble_server:
-    resource: "@DPMumbleServerBundle/Resources/config/routing/mumbleserver.yml"
-    prefix:   /
+mumble.title: Serveurs Mumble
+mumble.show: Voir
+mumble.list: Liste des Serveurs Steam
+mumble.add: Ajouter un serveur Steam
+mumble.edit: Modifier
+mumble.del: Supprimer
+mumble.back: Retour à la liste
+
+mumble.showTitle: Voir un serveur Steam
+mumble.editTitle: Modifier un serveur Steam
+
+mumble.id: ID
+mumble.name: Nom
+mumble.port: Port
+mumble.game: Jeu
+mumble.icesecret: IceSecret Mumble
+steam.munin: Graphes munin activés ?
+mumble.IPAddress: Adresse IP
+
+mumble.selectMachine: Sélectionnez une machine
+mumble.addButton: Ajouter
+
+mumble.ended: Terminé
+mumble.start: Démarrer
+mumble.stop: Arrêter
+mumble.restart: Redémarrer

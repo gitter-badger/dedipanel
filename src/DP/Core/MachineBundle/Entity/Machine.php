@@ -86,7 +86,17 @@ class Machine
      * @ORM\OneToMany(targetEntity="DP\GameServer\GameServerBundle\Entity\GameServer", mappedBy="machine", cascade={"persist"})
      */
     private $gameServers;
-
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection() $voipServer
+     * 
+     * @ORM\OneToMany(targetEntity="DP\VoipServer\VoipServerBundle\Entity\VoipServer", mappedBy="machine", cascade={"persist"})
+     */
+    private $voipServer;
+    
+    public function getVoipServer()
+    {
+        return $this->voipServer;
+    }
 
     public function __construct()
     {

@@ -1,0 +1,70 @@
+{# 
+ Copyright (C) 2010-2012 Kerouanton Albin, Smedts Jérôme
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#}
+
+{% extends "::layout.html.twig" %}
+
+{% block title %}<a href="{{ path('mumble') }}"><span class="titre">h</span></a>Serveur Mumble{% endblock %}
+
+
+{% block content %}
+    <ul>
+        <li>
+            <a href="{{ path('mumble_new') }}">
+                {{ 'steam.add'|trans }}
+            </a>
+        </li>
+    </ul>
+    
+    {% for entity in entities %}
+        <div class="steam-server" id="steam-{{ entity.id }}">
+                <div class="summary">
+                    <div class="infos">
+
+                        <a href="{{ path('mumble_show', {'id': entity.id }) }}">
+                            <img src="../images/serveur/viewer/mumble.png" alt="" />
+                        </a>
+                        <p>
+                            <b><a href="{{ path('mumble_show', {id: entity.id}) }}"></a></b><br />
+                            {{ entity.machine.publicIp }}:{{ entity.portmumble }}
+                        </p>
+                    </div>
+
+                    <div class="actions">
+                            <a href="{{ path('mumble', { 'id': entity.id, 'state': 'stop' }) }}">
+                                <img src="../images/icones/serveur/stop.png" title="{{ 'steam.stop'|trans }}"/>
+                            </a>
+                            <a href="{{ path('mumble', { 'id': entity.id, 'state': 'restart' }) }}">
+                                <img src="../images/icones/serveur/restart.png" title="{{ 'steam.restart'|trans }}"/>
+                            </a>
+
+                        <a href="{{ path('mumble_edit', {id: entity.id }) }}">
+                            <img src="../images/icones/serveur/config.png" title="{{ 'steam.edit'|trans }}" />
+                        </a>
+                        <a href="{{ path('mumble_show', {id: entity.id}) }}" class="slide" id="steam-{{ entity.id }}">
+                            <img src="../images/icones/serveur/bfleche.png" title="Slide"/>
+                        </a>
+                        <a href="{{ path('mumble', {id: entity.id }) }}">
+                            <img src="../images/icones/serveur/plugins.png" title="{{ 'steam.pluginsAction'|trans }}" />
+                        </a>
+                    </div>
+
+                    <div class="clear"></div>
+                </div>
+        </div>
+    {% endfor %}
+{% endblock %}
