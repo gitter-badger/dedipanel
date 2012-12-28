@@ -14,6 +14,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-dp_mumble_server:
+DPMumbleServerBundle:
     resource: "@DPMumbleServerBundle/Resources/config/routing/mumbleserver.yml"
     prefix:   /
+    
+DPMumbleServerBundle_Show:
+    resource: "@DPMumbleServerBundle/Resources/config/routing/mumbleview.yml"
+    prefix:   /{id}/server/
+    requirements: {id: \d+}
