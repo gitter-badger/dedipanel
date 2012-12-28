@@ -1,0 +1,30 @@
+mumble:
+    pattern:  /
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:index" }
+
+mumble_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:show" }
+
+mumble_new:
+    pattern:  /new
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:new" }
+
+mumble_create:
+    pattern:  /create
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:create" }
+    requirements: { _method: post }
+
+mumble_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:edit" }
+
+mumble_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:update" }
+    requirements: { _method: post }
+
+mumble_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:delete" }
+    requirements: { _method: post }
