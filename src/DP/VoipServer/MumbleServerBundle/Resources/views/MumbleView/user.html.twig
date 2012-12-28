@@ -17,17 +17,17 @@
 #}
 
 {% extends "::layout.html.twig" %}
-{% block title %}<a href="{{ path('mumble') }}"><span class="titre">h</span></a>Ajouter un serveur mumble{% endblock %}
 {% block content %}
 
+<legend><a href="{{ path('mumble') }}"><span class="titre">h</span></a>{{ 'mumble.add'|trans }}</legend>
 
     <form action="{{ path('mumble_create') }}" method="post" {{ form_enctype(form) }}>
        <fieldset id="validation">	
             {{ form_widget(form) }}
-
-            <p>
-                <input type="submit" value="create" name="submit" class="submit">
-            </p>
+           
+            <div class="form-actions">
+                <button type="submit"  class="btn btn-primary">{{ 'mumble.addButton'|trans }}</button>
+            </div>
         </fieldset>	
     </form>
 {% endblock %}
