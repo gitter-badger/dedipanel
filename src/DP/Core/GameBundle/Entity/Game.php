@@ -68,7 +68,6 @@ class Game
      * @var string $bin
      *
      * @ORM\Column(name="bin", type="string", length=24)
-     * @Assert\Choice(choices={"hlds_run", "srcds_run"}, message="game.assert.bin")
      */
     private $bin;
 
@@ -89,7 +88,7 @@ class Game
     /**
      * @var string $map
      *
-     * @ORM\Column(name="map", type="string", length=20)
+     * @ORM\Column(name="map", type="string", length=20, nullable=true)
      */
     private $map;
 
@@ -125,17 +124,28 @@ class Game
      * @var \Doctrine\Common\Collections\ArrayCollection $plugins
      * 
      * @ORM\ManyToMany(targetEntity="DP\Core\GameBundle\Entity\Plugin", inversedBy="games")
-     * @ORM\JoinTable(name="games_plugins", 
+     * @ORM\JoinTable(name="game_plugin", 
      *      joinColumns={@ORM\JoinColumn(name="game_id", referencedColumnName="id")}, 
      *      inverseJoinColumns={@ORM\JoinColumn(name="plugin_id", referencedColumnName="id")}
      * )
      */
     private $plugins; 
     
+    /**
+     * @ORM\Column(name="type", type="string", length=32)
+     * @Assert\Choice(choices={"steam", "minecraft"}, message="game.assert.type")
+     */    
+    private $type;
+    
+    /**
+     * @ORM\Column(name="configTemplate", type="text", nullable=true)
+     */
+    private $configTemplate;
+    
 
     public function __construct()
     {
-        $this->setPlugins();
+        $this->plugins = new \Doctrine\Common\Collections\ArrayCollection(array());
     }
     
     /**
@@ -369,8 +379,16 @@ class Game
      */
     public function addPlugin(\DP\Core\GameBundle\Entity\Plugin $plugin)
     {
-        $plugin->addGame($this);
         $this->plugins[] = $plugin;
+        
+        if (!$plugin->getGames()->contains($this)) {
+            $plugin->addGame($this);
+        }
+    }
+    
+    public function removePlugin(Plugin $plugin)
+    {
+        $this->plugins->removeElement($plugin);
     }
     
     /**
@@ -378,7 +396,7 @@ class Game
      * 
      * @param array $plugins 
      */
-    private function setPlugins(array $plugins = array())
+    public function setPlugins(array $plugins = array())
     {
         $this->plugins = new \Doctrine\Common\Collections\ArrayCollection($plugins);
     }
@@ -390,10 +408,48 @@ class Game
      */
     public function getPlugins()
     {
-        if ($this->plugins instanceof \Doctrine\ORM\PersistentCollection) {
-            $this->setPlugins($this->plugins->getValues());
-        }
-        
         return $this->plugins;
+    }
+    
+    /**
+     * Set game type (steam or minecraft)
+     * 
+     * @param string $type 
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+    
+    /**
+     * @return string Game type
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+    
+    public function isBukkit()
+    {
+        return $this->getInstallName() == 'bukkit';
+    }
+    
+    /**
+     * Set the server config file template
+     * @param string|null $configTemplate 
+     */
+    public function setConfigTemplate($configTemplate)
+    {
+        $this->configTemplate = $configTemplate;
+    }
+    
+    /**
+     * Get the server config file template
+     * 
+     * @return string
+     */
+    public function getConfigTemplate()
+    {
+        return $this->configTemplate;
     }
 }

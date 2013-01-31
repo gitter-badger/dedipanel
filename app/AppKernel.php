@@ -39,9 +39,13 @@ class AppKernel extends Kernel
             
             new DP\GameServer\GameServerBundle\DPGameServerBundle(),
             new DP\GameServer\SteamServerBundle\DPSteamServerBundle(),
+<<<<<<< HEAD
             
             new DP\VoipServer\VoipServerBundle\DPVoipServerBundle(),
             new DP\VoipServer\MumbleServerBundle\DPMumbleServerBundle(),
+=======
+            new DP\GameServer\MinecraftServerBundle\DPMinecraftServerBundle(),
+>>>>>>> origin/master
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

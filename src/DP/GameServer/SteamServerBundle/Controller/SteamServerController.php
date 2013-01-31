@@ -25,7 +25,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use DP\GameServer\SteamServerBundle\Entity\SteamServer;
 use DP\GameServer\SteamServerBundle\Form\AddSteamServerType;
 use DP\GameServer\SteamServerBundle\Form\EditSteamServerType;
-use DP\GameServer\SteamServerBundle\SteamQuery\Exception\ServerTimeoutException;
 
 /**
  * SteamServer controller.
@@ -97,10 +96,12 @@ class SteamServerController extends Controller
         $form->bindRequest($request);
 
         if ($form->isValid()) {
-            $install = $request->request->getInt('install');
+            $alreadyInstalled = $form->get('alreadyInstalled')->getData();
             $twig = $this->get('twig');
             
-            if ($install) {
+            // On lance l'installation si le serveur n'est pas déjà sur la machine, 
+            // Sinon on upload les scripts nécessaires au panel
+            if (!$alreadyInstalled) {
                 $entity->installServer($twig);
             }
             else {
@@ -112,7 +113,6 @@ class SteamServerController extends Controller
             $em->flush();
 
             return $this->redirect($this->generateUrl('steam_show', array('id' => $entity->getId())));
-            
         }
 
         return $this->render('DPSteamServerBundle:SteamServer:new.html.twig', array(
@@ -137,7 +137,7 @@ class SteamServerController extends Controller
 
         $editForm = $this->createForm(new EditSteamServerType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
-
+        
         return $this->render('DPSteamServerBundle:SteamServer:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
@@ -162,9 +162,7 @@ class SteamServerController extends Controller
         $editForm   = $this->createForm(new EditSteamServerType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        $request = $this->getRequest();
-
-        $editForm->bindRequest($request);
+        $editForm->bind($this->getRequest());
 
         if ($editForm->isValid()) {
             $em->persist($entity);
@@ -236,7 +234,7 @@ class SteamServerController extends Controller
         // On récupère le statut de l'installation que si celui-ci
         // N'est pas déjà indiqué comme terminé
         elseif ($status < 100) {
-            $newStatus = $entity->getGameInstallationProgress();
+            $newStatus = $entity->getInstallationProgress();
             $entity->setInstallationStatus($newStatus);
             
             if ($newStatus == 100) {

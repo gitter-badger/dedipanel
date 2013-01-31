@@ -111,8 +111,8 @@ class Socket
         socket_set_block($this->socket);
         socket_set_option($this->socket, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $this->timeout[0], 'usec' => $this->timeout[1]));
         socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $this->timeout[0], 'usec' => $this->timeout[1]));
-                
-        $connect = socket_connect($this->socket, $this->ip, $this->port);
+               
+        $connect = @socket_connect($this->socket, $this->ip, $this->port);
         
         if (!$connect) {
             throw new ConnectionFailedException($this->getLastError());
@@ -200,25 +200,27 @@ class Socket
             }
             
             $read = new Packet($content);
-            
-            if (is_array($this->callback)) {
-                if ($multiPacket && is_callable($this->callback[0])) {
-                    $res = call_user_func($this->callback[0], $read);
-                    if ($res) {
+
+            if ($multiPacket && is_array($this->callback) && !empty($this->callback)) {
+                if (count($this->callback) == 2 && is_callable($this->callback[0]) && is_callable($this->callback[1])) {
+                    $isMultiPacketResp = call_user_func($this->callback[0], $read);
+                    
+                    if ($isMultiPacketResp) {
                         $read = call_user_func($this->callback[1], $read, $this);
                     }
                 }
-            }
-            elseif (!is_null($this->callback)) {
-                if ($multiPacket && is_callable($this->callback)) {
-                    $read = call_user_func($this->callback, $read, $this);
+                elseif (is_callable($this->callback[0])) {
+                    $read = call_user_func($this->callback[0], $read, $this);
                 }
             }
             
             return $read;
         }
         elseif ($select === 0) {
-            $this->connected = false;
+            if ($this->type == 'udp') {
+                $this->connected = false;
+            }
+            
             throw new RecvTimeoutException($this->getLastError());
         }
         else {

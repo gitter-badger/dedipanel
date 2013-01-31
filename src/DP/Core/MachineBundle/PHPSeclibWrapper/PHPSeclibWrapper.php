@@ -190,7 +190,7 @@ class PHPSeclibWrapper {
         $ret = trim($ret);
         
         if ($this->debug) {
-            // TODO: Add debug via monolog
+            // @TODO: Add debug via monolog
         }
         
         return $ret;
@@ -267,8 +267,11 @@ class PHPSeclibWrapper {
     public function deleteKeyPair($publicKey)
     {        
         try {
+            // Suppression de la clé publique de la machine
             $publicKey = str_replace('/', '\/', $publicKey);
             $this->exec('cd ~/.ssh/ && sed -i "/^' . $publicKey . '/d" authorized_keys');
+            
+            // Puis suppression de la clé privée stockée sur le panel
             unlink($this->getPrivateKeyFilepath());
             
             return true;
@@ -333,6 +336,40 @@ class PHPSeclibWrapper {
     public function getRemoteFile($remoteFile)
     {
         return $this->getSFTP()->get($remoteFile);
+    }
+    
+    /**
+     * Remove file or directory from the server
+     * 
+     * @param string $path
+     * @return bool
+     */
+    public function remove($path)
+    {
+        return $this->getSFTP()->delete($path, true);
+    }
+    
+    public function touch($file)
+    {
+        return $this->getSSH()->exec('touch ' . $file);
+    }
+    
+    public function fileExists($filepath)
+    {
+        $cmd = 'if [ -f ' . $filepath . ']; then echo 1; else echo 0; fi';
+        
+        return intval($this->getSSH()->exec($cmd));
+    }
+    
+    public function dirExists($dirpath)
+    {
+        $cmd = 'if [ -d ' . $dirpath . ' ]; then echo 1; else echo 0; fi';
+        return (bool) intval($this->getSSH()->exec($cmd));
+    }
+    
+    public function createDirectory($dirpath)
+    {
+        return $this->getSSH()->exec('mkdir ' . $dirpath);
     }
     
     
@@ -457,10 +494,5 @@ class PHPSeclibWrapper {
     public function getDebug()
     {
         return $this->debug;
-    }
-    
-    public function touch($file)
-    {
-        return $this->getSSH()->exec('touch ' . $file);
     }
 }

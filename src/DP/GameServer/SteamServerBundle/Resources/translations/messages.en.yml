@@ -14,29 +14,33 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+steam.title: Steam Servers
 steam.show: Show
 steam.list: Steam Servers list
 steam.add: Add a server
 steam.edit: Edit
 steam.back: Back to the list
+steam.query: Query
 
-steam.id: ID
-steam.name: Name
-steam.port: Port
-steam.game: Game
-steam.installStatus: Installation status
-steam.dir: Installation dir.
-steam.maxplayers: Max Players
+steam.showTitle: Show Steam Server
+steam.editTitle: Edit Steam Server
+
 steam.autoReboot: Auto Reboot at
 steam.rcon: RCON Password
 steam.munin: Munin Graphing ?
 steam.passwd: Server Password
 steam.core: Core ?
-steam.actions: Actions
-steam.IPAddress: IP Address
 
-steam.selectMachine: Select a machine
-steam.selectGame: Select a game
-steam.addButton: Add
-
-steam.ended: Ended
+steam.hltv.running: HLTV start
+steam.hltv.stopped: HLTV stopped
+steam.hltv.hltvIP: HLTV Ip Adress
+steam.hltv.password: Server password
+steam.hltv.serverAddress: Server adress
+steam.hltv.recordName: Record name
+steam.hltv.connect: Connect HLTV
+steam.hltv.reloadMap: Restart the map ?
+steam.hltv.yes: Yes
+steam.hltv.no: No
+steam.hltv.portAlreadyUsed: The specified port for HLTV is already used
+steam.hltv.port: HLTV port
+steam.hltv.title: HLTV area

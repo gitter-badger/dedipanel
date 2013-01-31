@@ -23,6 +23,7 @@ use DP\GameServer\GameServerBundle\Socket\Socket;
 use DP\GameServer\GameServerBundle\Socket\Packet;
 use DP\GameServer\GameServerBundle\Socket\PacketCollection;
 
+use DP\GameServer\GameServerBundle\Query\QueryInterface;
 use DP\GameServer\GameServerBundle\Socket\Exception\ConnectionFailedException;
 use DP\GameServer\GameServerBundle\Socket\Exception\NotConnectedException;
 use DP\GameServer\GameServerBundle\Socket\Exception\RecvTimeoutException;
@@ -33,7 +34,7 @@ use DP\GameServer\SteamServerBundle\SteamQuery\Exception\UnexpectedServerTypeExc
 /**
  * @author Albin Kerouanton 
  */
-class SteamQuery
+class SteamQuery implements QueryInterface
 {
     private $container;
     private $socket;
@@ -206,8 +207,10 @@ class SteamQuery
                 $this->socket->send($packet);
                 $resp = $this->socket->recv();
 
-                $data = $resp->extract(
-                    array('header' => 'byte', 'challenge' => 'long'));
+                $data = $resp->extract(array(
+                    'header' => 'byte', 
+                    'challenge' => 'long', 
+                ));
 
                 if ($data['header'] == 65) {
                     $this->challenge = $data['challenge'];

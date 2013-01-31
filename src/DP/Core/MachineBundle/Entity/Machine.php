@@ -1,8 +1,27 @@
 <?php
 
+/*
+** Copyright (C) 2010-2012 Kerouanton Albin, Smedts Jérôme
+**
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License along
+** with this program; if not, write to the Free Software Foundation, Inc.,
+** 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 namespace DP\Core\MachineBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use DP\Core\MachineBundle\PHPSeclibWrapper\PHPSeclibWrapper;
 
 /**
  * DP\Core\MachineBundle\Entity\Machine
@@ -55,9 +74,9 @@ class Machine
     private $user;
     
     /**
-     * @var string $passwd
+     * @var string $password
      */
-    private $passwd;
+    private $password;
 
     /** 
      * @var string $privateKey
@@ -86,6 +105,7 @@ class Machine
      * @ORM\OneToMany(targetEntity="DP\GameServer\GameServerBundle\Entity\GameServer", mappedBy="machine", cascade={"persist"})
      */
     private $gameServers;
+<<<<<<< HEAD
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection() $voipServer
      * 
@@ -97,6 +117,16 @@ class Machine
     {
         return $this->voipServer;
     }
+=======
+    
+    /**
+     * @var integer
+     * 
+     * @ORM\Column(name="nbCore", type="integer", nullable=true)
+     */
+    private $nbCore;
+
+>>>>>>> origin/master
 
     public function __construct()
     {
@@ -250,20 +280,20 @@ class Machine
     /**
      * Set password
      * 
-     * @param string $passwd
+     * @param string $password
      */
-    public function setPasswd($passwd)
+    public function setPassword($password)
     {
-        $this->passwd = $passwd;
+        $this->password = $password;
     }
     /**
      * Get password
      * 
      * @return string
      */
-    public function getPasswd()
+    public function getPassword()
     {
-        return $this->passwd;
+        return $this->password;
     }
     
     /**
@@ -288,5 +318,59 @@ class Machine
     public function __toString() {
         return $this->user . '@' . $this->privateIp . ':' . $this->port;
     }
+    
+    /**
+     * Set the number of core on the server
+     * 
+     * @param integer $nbCore
+     */
+    public function setNbCore($nbCore)
+    {
+        $this->nbCore = $nbCore;
+    }
+    
+    /**
+     * Get the number of core on the server
+     * 
+     * @return integer Number of core
+     */
+    public function getNbCore()
+    {
+        return $this->nbCore;
+    }
+    
+    public function retrieveNbCore()
+    {        
+        return PHPSeclibWrapper::getFromMachineEntity($this)
+                ->exec('grep processor /proc/cpuinfo | wc -l');
+    }
+    
+    public function updateCrontab($search, $replace)
+    {
+        $cmd  = 'crontab -l | awk \'BEGIN{search="' . $search . '"; replacement="' . $replace . '"}//';
+        $cmd .= '{if ($6 == search) { print replacement; found=1} else { print }}';
+        $cmd .= 'END{ if (!found) { print replacement }}\' | crontab -';
+        
+        return PHPSeclibWrapper::getFromMachineEntity($this)
+                ->exec($cmd);
+    }
+    
+    public function removeFromCrontab($search)
+    {
+        $cmd  = 'crontab -l | awk \'BEGIN{search="' . $search . '"}//';
+        $cmd .= '{if ($6 == search) { found=1} else { print }}\' | crontab -';
+        
+        return PHPSeclibWrapper::getFromMachineEntity($this)
+                ->exec($cmd);
+    }
+    
+    public function fileExists($filepath)
+    {
+        return PHPSeclibWrapper::getFromMachineEntity($this)->fileExists($filepath);
+    }
+    
+    public function dirExists($dirpath)
+    {
+        return PHPSeclibWrapper::getFromMachineEntity($this)->dirExists($dirpath);
+    }
 }
-?>

@@ -38,7 +38,7 @@ class SourceRcon
     
     public function __construct($container, $host, $port, $rconPassword)
     {
-        $callback = function(Packet $packet, Socket $socket) {
+        /*$callback = function(Packet $packet, Socket $socket) {
             if (is_null($packet) || $packet->isEmpty()) return false;
             
             $remaining = $packet->getLong(false);
@@ -80,11 +80,51 @@ class SourceRcon
             else {
                 return $packet;
             }
+        };*/
+        $callbacks = array();
+        // Permet de déterminé s'il s'agit d'une réponse multi-paquet
+        $callbacks[] = function(Packet $packet) {
+            if (is_null($packet) || $packet->isEmpty()) return false;
+            
+            // Récupération de la longueur de la réponse
+            $len = $packet->getLong(false);
+            // Il faut rajouter 4 puisque la taille récupéré correspondant 
+            // A la taille du paquet sans l'entier contenant la taille
+            $remaining = $len - $packet->getLength() + 4;
+            
+            if ($remaining > 0) {                
+                return true;
+            }
+            else {
+                return false;
+            }
+        };
+        // Permet de récupérer les différents paquets qui composent une réponse
+        $callbacks[] = function(Packet $packet, Socket $socket) {
+            if (is_null($packet) || $packet->isEmpty()) return false;
+            
+            // Récupération de la longueur de la réponse
+            $len = $packet->getLong(false);
+            // Il faut rajouter 4 puisque la taille récupéré correspondant 
+            // A la taille du paquet sans l'entier contenant la taille
+            $remaining = $len - $packet->getLength() + 4;
+            
+            while ($remaining > 0) {
+                // Récupération du prochain paquet et calcul de la taille restante à récupérer
+                $newPacket = $socket->recv(false, $remaining);
+                $remaining = $remaining - $newPacket->getLength();
+
+                // Ajout du paquet au paquet originel
+                $packet->setPos($packet->getLength() - 2);
+                $packet->addContent($newPacket->getContent());
+            }
+            
+            return $packet;
         };
         
         $this->rconPassword = $rconPassword;
-        $this->socket = $container->get('socket')->getTCPSocket($host, $port, $callback);
-        $this->packetFactory = $container->get('packet.factory.steam.rcon.source');
+        $this->socket = $container->get('socket')->getTCPSocket($host, $port, $callbacks);
+        $this->packetFactory = $container->get('packet.factory.rcon.source');
         
         try {
             $this->socket->connect();
@@ -97,7 +137,7 @@ class SourceRcon
     {
         if ($this->authenticated == null) {
             $id = null;
-            $packet = $this->packetFactory->getAuthPacket($id, $this->rconPassword);
+            $packet = $this->packetFactory->getAuthPacket($id, $this->rconPassword);            
             $this->socket->send($packet);
             $resp = $this->socket->recv(false);
             
@@ -148,12 +188,18 @@ class SourceRcon
                 return false;
             }
             
-            if ($resp->setPos(8)->getLong(false) != $this->packetFactory->SERVER_RESPONSE_VALUE 
-                || $resp->setPos(4)->getLong(false) != $id) {
+            $resp = $resp->rewind()->extract(array(
+                'size' => 'long', 
+                'id' => 'long', 
+                'type' => 'long', 
+                'body' => 'string', 
+            ));
+            
+            if ($resp['id'] != $id || $resp['type'] != $this->packetFactory->SERVER_RESPONSE_VALUE) {
                 return false;
             }
             
-            return $resp->rewind();
+            return $resp['body'];
         }
         else {
             return false;
@@ -162,14 +208,13 @@ class SourceRcon
     
     /**
      * Get mulitple packets from socket recv method
-     * Return reassemble packets if there is reponse(s)
-     * Or return null if there is a RecvTimeoutException catched 
+     * Return reassembled packets if there is reponses
+     * Or return null if there is a RecvTimeoutException catched and any response recovered
      * before any content has been received.
      * 
-     * @param type $multipacket
      * @return \DP\GameServer\GameServerBundle\Socket\Packet|null
      */
-    private function recv($multipacket = true)
+    private function recv()
     {
         $packets = new PacketCollection();
         
@@ -181,16 +226,58 @@ class SourceRcon
             catch (RecvTimeoutException $e) {
                 $resp = null;
             }
-            
         } while ($resp != null);
         
-        if ($resp == null && $packets->count() == 0) {
-            return null;
-        }
-        else {
-            return $packets->reassemble();
+        // Verif que tous les paquets ont bien été reçus
+        // Si c'est le cas on renvoie les données reçus, sinon on renvoie rien
+        if ($packets->count() > 0 && $this->verifyAllPacketsReceived()) {
+            $packetFactory = $this->packetFactory;
+
+            return $packets->reassemble(function (Packet $bigPacket, Packet $packet) use ($packetFactory) {
+                if ($bigPacket->isEmpty()) {
+                    $bigPacket->addContent($packet);
+                }
+                else {
+                    $bigPacket->rewind();
+
+                    // Ajout de la taille du packet au bigPacket
+                    $packetSize = $packet->getLong(false);
+                    $bigPacketSize = $bigPacket->getLong();
+                    $newSize = $packetSize + $bigPacketSize;
+
+                    $bigPacket->rewind()->addContent(
+                        $packetFactory->transformLong($newSize)
+                    );
+
+                    // Ajout du contenu au bigPacket                
+                    $bigPacket->setPos($bigPacket->getLength()-4)->addContent(
+                        substr($packet->setPos(12)->getString(), 0, -4)
+                    );
+                }
+
+                return $bigPacket;
+            });
         }
         
-        return $packet->rewind();
+        return null;
+    }
+    
+    public function verifyAllPacketsReceived()
+    {
+        $id = null;
+        $packet = $this->packetFactory->getEmptyResponsePacket($id);
+        $this->socket->send($packet);
+        
+        if ($this->socket->recv(false) == $packet) {
+            $resp = $this->socket->recv(false);
+            $resp->setPos(13);
+            
+            if ($resp->getByte() == 1) {
+                return true;
+            }
+        }
+        
+        return false;
+        
     }
 }

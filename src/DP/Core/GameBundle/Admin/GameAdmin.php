@@ -34,6 +34,9 @@ class GameAdmin extends Admin
             ->addIdentifier('name')
             ->add('installName')
             ->add('launchName')
+            ->add('type', 'choice', array(
+                'choices' => array('steam' => 'Steam', 'minecraft' => 'Minecraft')
+            ))
             ->add('orangebox')
             ->add('source')
             ->add('bin')
@@ -44,16 +47,14 @@ class GameAdmin extends Admin
     
     protected function configureDatagridFilters(DatagridMapper $filterMapper) 
     {
-        $filterMapper
+        /*$filterMapper
             ->add('name')
             ->add('installName')
             ->add('launchName')
             ->add('orangebox')
             ->add('source')
-            ->add('bin')
             ->add('available')
-            ->add('id')
-        ;
+        ;*/
     }
     
     protected function configureFormFields(FormMapper $formMapper)
@@ -66,10 +67,17 @@ class GameAdmin extends Admin
             ->add('binDir')
             ->add('orangebox', null, array('required' => false))
             ->add('source', null, array('required' => false))
-            ->add('map')
-            ->add('available', null, array('required' => false))
+            ->add('map', null, array('required' => false))
+            ->add('configTemplate', null, array(
+                'required' => false, 
+                'attr' => array('class' => 'template-server-cfg'), 
+            ))
             ->add('sourceImagesMaps', null, array('required' => false))
-            ->add('plugins', 'sonata_type_model', array('required' => false))
+            ->add('plugins', 'sonata_type_model', array('required' => false, 'multiple' => true, 'expanded' => true))
+            ->add('type', 'choice', array(
+                'choices' => array('steam' => 'Steam', 'minecraft' => 'Minecraft')
+            ))
+            ->add('available', null, array('required' => false))
         ;
     }
 }

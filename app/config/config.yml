@@ -35,6 +35,8 @@ framework:
 twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
+    form:
+        resources: ['::form.html.twig']
 
 # Assetic Configuration
 assetic:
@@ -82,13 +84,13 @@ fos_user:
         group_class: Application\Sonata\UserBundle\Entity\Group
     profile:  # Authentication Form
       form:
-          type:               app_user_auth
-          handler:            app_user.auth.form.handler
-          name:               app_user_auth_form
+          type:               app_user_profile
+          name:               app_user_profile_form
           validation_groups:  [Authentication] # Please note : this is not the default value
 
 sonata_user:
     security_acl: true
+    impersonating_route: _welcome
     class:
         user:               Application\Sonata\UserBundle\Entity\User
         group:              Application\Sonata\UserBundle\Entity\Group
@@ -108,16 +110,17 @@ sonata_admin:
         # permission related to the objects
         object_permissions: [VIEW, EDIT, DELETE, UNDELETE, OPERATOR, MASTER, OWNER]
     templates:
-        layout: ApplicationSonataUserBundle::standard_layout.html.twig
-#    dashboard_groups:
-#        sonata_user: ~
-
-#services:
-#    sonata.user.admin:
-#        class: Sonata\UserBundle\Admin\Entity\UserAdmin
-#        tags:
-#            - { name: sonata.admin, manager_type: orm, group: sonata_user, label: user }
-#        arguments: [null, Application\Sonata\UserBundle\Entity\User, SonataAdmibBundle:CRUD]
+        layout: ::layout-sonata.html.twig
+#        layout: SonataAdminBundle::standard_layout.html.twig
+    dashboard:
+        groups:
+            sonata_user:
+                items: [sonata.user.admin.user, sonata.user.admin.group]
+                label: admin.group.user
+            dp_game:
+                items: [dp.game.admin.game, dp.game.admin.plugin]
+                label: admin.group.game
+    persist_filters: true
 
 sonata_block:
     default_contexts: [cms]

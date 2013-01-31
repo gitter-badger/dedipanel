@@ -13,15 +13,15 @@
                 <b>{{ label|trans }} :</b>
                 
                 {% if state == true %}
-                    OK
+                    {{ 'configurator.ok'|trans }}
                 {% else %}
-                    NOK
+                    {{ 'configurator.nok'|trans }}
                 {% endif %}
             </li>
         {% endfor %}
     </ul>
     
     {% if hasError == false %}
-        <a href="{{ path('installer_step', { 'type': 'install', 'index': 0 }) }}">{{ 'configurator.next'|trans }}</a>
+        <a href="{{ path('installer_step', { 'type': 'install', 'index': 0 }) }}" class="btn btn-primary">{{ 'configurator.next'|trans }}</a>
     {% endif %}
 {% endblock %}

@@ -25,6 +25,7 @@
     {% if label is empty %}
         {% set label = name|humanize %}
     {% endif %}
+    
     <label for="{{ id }}">
         {{ label|trans }}
         {% if required %}

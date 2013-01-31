@@ -2,19 +2,22 @@
 
 {% block content %}
     {% form_theme form "DPDistributionBundle:Configurator:form.html.twig" %}
-    {% include "DPDistributionBundle:Configurator:steps.html.twig" %}
+    {% include "DPDistributionBundle:Configurator:steps.html.twig" with { "index": index, "count": count } %}
 
-    <h1>{{ 'configurator.userCreation.title'|trans }}</h1>
-    <p>{{ 'configurator.userCreation.description'|trans }} :</p>
+     <legend>{{ 'configurator.userCreation.title'|trans }}</legend>
+     <p>{{ 'configurator.userCreation.description'|trans }}</p>
 
     {{ form_errors(form) }}
-    <form action="{{ path('installer_step', {'type': configType, 'index': index}) }} " method="post">
+    <form action="{{ path('_configurator_step', { 'index': index }) }} " method="POST">
+
         {{ form_rest(form) }}
 
-        <div class="symfony-form-footer">
-            <p><input type="submit" value="{{ 'configurator.next'|trans }}" /></p>
-            <p>* {{ 'configurator.mandatoryFields'|trans }}</p>
+        <div class="form-actions">
+            <p><input type="submit" value="{{ 'Next Step'|trans }}" class="btn btn-primary" /></p>
+
+            <span class="information">
+                {{ '* mandatory fields'|trans }}
+            </span>       
         </div>
-        
     </form>
 {% endblock %}

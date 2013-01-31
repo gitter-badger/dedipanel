@@ -20,6 +20,7 @@
 
 namespace DP\Core\DistributionBundle\Configurator\Step;
 
+
 use DP\Core\DistributionBundle\Configurator\Step\StepInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use DP\Core\DistributionBundle\Configurator\Form\UserStepType;
@@ -44,6 +45,7 @@ class UserStep implements StepInterface
     public $email;
     
     /**
+     * 
      * @Assert\NotBlank(message="configurator.userCreation.password.blank")
      * @Assert\MinLength(limit="6", message="configurator.userCreation.password.short")
      */

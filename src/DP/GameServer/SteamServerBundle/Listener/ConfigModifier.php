@@ -23,7 +23,6 @@ namespace DP\GameServer\SteamServerBundle\Listener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use DP\GameServer\SteamServerBundle\Entity\SteamServer;
 use DP\Core\MachineBundle\Entity\Machine;
-use DP\Core\GameBundle\Entity\Game;
 
 /**
  * @author Albin Kerouanton 
@@ -74,62 +73,37 @@ class ConfigModifier
         $entity = $args->getEntity();
         
         if ($entity instanceof SteamServer) {            
-            // Réinstallation du serveur si modif de l'endroit où il est hébergé
-            if ($args->hasChangedField('machine') || $args->hasChangedField('game')) {
-                try {
-                    $entity->installServer($this->getTwig());
-                }
-                catch (\Exception $e) {
-                    $entity->setInstallationStatus(0);
-                }
-                
-                $em = $args->getEntityManager();
-                $uow = $em->getUnitOfWork();
-                $meta = $em->getClassMetadata(get_class($entity));
-                $uow->recomputeSingleEntityChangeSet($meta, $entity);
-            }
-            elseif ($args->hasChangedField('port') || $args->hasChangedField('maxplayers') 
-                || $args->hasChangedField('dir')) {
+            if ($args->hasChangedField('port') || $args->hasChangedField('maxplayers') 
+                || $args->hasChangedField('dir') || $args->hasChangedField('core')) {
                 try {
                     $entity->uploadHldsScript($this->getTwig());
                 }
                 catch (\Exception $e) {}
             }
+            elseif ($args->hasChangedField('rebootAt')) {
+                // Suppression du reboot auto si la valeur du champ vaut null
+                // Sinon ajout/modif
+                if ($args->getNewValue('rebootAt') == null) {
+                    $entity->removeAutoReboot();
+                }
+                else {
+                    $entity->addAutoReboot();
+                }
+            }
         }
         elseif ($entity instanceof Machine) {
-            // Réinstallation de la machine si l'IP privé ou l'utilisateur a été modifié
-            if ($args->hasChangedField('privateIp') || $args->hasChangedField('user')
-                || $args->hasChangedField('home')) {
-                try {
-                    $entity->installServer($this->getTwig());
-                }
-                catch (\Exception $e) {
-                    $entity->setInstallationStatus(0);
-                }
+            // Upload des scripts si l'IP publique ou le home de la machine a été modifié
+            if ($args->hasChangedField('publicIp')) {
+                $servers = $entity->getGameServers();
                 
-                $em = $args->getEntityManager();
-                $uow = $em->getUnitOfWork();
-                $meta = $em->getClassMetadata(get_class($entity));
-                $uow->recomputeSingleEntityChangeSet($meta, $entity);
-            }
-            // Upload des scripts si l'IP public ou le home de la machine a été modifié
-            elseif ($args->hasChangedField('publicIp')) {
-                try {
-                    $entity->uploadHldsScripts($this->getTwig());
+                foreach ($servers AS $server) {
+                    if (!$server instanceof SteamServer) continue;
+                    
+                    try {
+                        $server->uploadHldsScript($this->getTwig());
+                    }
+                    catch (\Exception $e) {}
                 }
-                catch (\Exception $e) {}
-            }
-        }
-        // Modif de la config d'un jeu
-        elseif ($entity instanceof Game) {
-            if ($args->hasChangedField('bin') || $args->hasChangedField('binDir') 
-                || $args->hasChangedField('installName') || $args->hasChangedField('launchName') 
-                || $args->hasChangedField('map') || $args->hasChangedField('orangebox') 
-                || $args->hasChangedField('source')) {
-                try {
-                    $entity->uploadHldsScripts($this->getTwig());
-                }
-                catch (\Exception $e) {}
             }
         }
     }

@@ -14,9 +14,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-DPSteamServerBundle:
-    resource: "@DPSteamServerBundle/Resources/config/routing.yml"
-    prefix:   /steam/
+DPGameServerBundle:
+    resource: "@DPGameServerBundle/Resources/config/routing.yml"
+    prefix:   /game/
 
 DPMachineBundle:
     resource: "@DPMachineBundle/Resources/config/routing.yml"
@@ -32,6 +32,19 @@ DPMumbleServerBundle:
 
 _welcome:
     pattern: /
+    
+admin:
+    resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'
+    prefix: /admin
+
+sonata_user:
+    resource: '@SonataUserBundle/Resources/config/routing/admin_security.xml'
+    prefix: /admin
+
+_sonata_admin:
+    resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'
+    type: sonata_admin
+    prefix: /admin
 
 # Internal routing configuration to handle ESI
 #_internal:
