@@ -28,7 +28,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * DP\VoipServer\VoipServer\Entity\VoipServer
  *
  * @ORM\Table(name="voipserver")
- * @ORM\Entity(repositoryClass="DP\VoipServer\VoipServer\Entity\VoipServerRepository")
+ * @ORM\Entity()
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="servertype", type="string")
+ * @ORM\DiscriminatorMap({"mumble" = "DP\VoipServer\MumbleServerBundle\Entity\MumbleServer"})
  */
 class VoipServer {
     /**
@@ -39,15 +42,7 @@ class VoipServer {
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
-    /**
-     * @var bigint $privateIp
-     *
-     * @ORM\Column(name="privateIp", type="string", length=15, nullable=true)
-     * @Assert\Ip(message="voipserver.assert.privateIp")
-     */
-    private $privateIp;
-
+    
     /**
      * @var integer $portMumble
      *
@@ -58,24 +53,99 @@ class VoipServer {
     private $portMumble = 6502;
 
     /**
-     * @var string $user
+     * @var string $dir
      *
-     * @ORM\Column(name="user", type="string", length=16)
-     * @Assert\NotBlank(message="voipserver.assert.user")
+     * @ORM\Column(name="dir", type="string", length=64)
+     * @Assert\NotBlank(message="mumbleServer.assert.dir")
      */
-    private $user;
+    protected $dir;
     
     /**
-     * @var string $passwd
+     * @var string $repertoire
+     *
+     * @ORM\Column(name="repertoire", type="string", length=32, nullable=true)
      */
-    private $passwd;
+    private $iceSecret;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="DP\Core\MachineBundle\Entity\Machine", inversedBy="voipserver")
+     * @ORM\JoinColumn(name="machineId", referencedColumnName="id")
+     * @Assert\NotNull(message="voipserver.assert.machine")
+     */
+    protected $machine;
 
     /**
-     * @var string $home
-     * 
-     * @ORM\Column(name="home", type="string", length=255, nullable=true)
+     * Get id
+     *
+     * @return integer 
      */
-    private $home;
+    public function getId()
+    {
+        return $this->id;
+    }
 
+    /**
+     * Set portMumble
+     *
+     * @param integer $portMumble
+     * @return VoipServer
+     */
+    public function setPortMumble($portMumble)
+    {
+        $this->portMumble = $portMumble;
+    
+        return $this;
+    }
 
+    /**
+     * Get portMumble
+     *
+     * @return integer 
+     */
+    public function getPortMumble()
+    {
+        return $this->portMumble;
+    }
+    
+    /**
+     * Set iceSecret
+     *
+     * @param integer $iceSecret
+     * @return VoipServer
+     */
+    public function seticeSecret($iceSecret)
+    {
+        $this->iceSecret = $iceSecret;
+    
+        return $this;
+    }
+
+    /**
+     * Get iceSecret
+     *
+     * @return integer 
+     */
+    public function geticeSecret()
+    {
+        return $this->iceSecret;
+    }
+     /**
+     * Set machine
+     *
+     * @param Machine $machine
+     */
+    public function setMachine(Machine $machine)
+    {
+        $this->machine = $machine;
+    }
+
+    /**
+     * Get machine
+     *
+     * @return Machine
+     */
+    public function getMachine()
+    {
+        return $this->machine;
+    }
 }

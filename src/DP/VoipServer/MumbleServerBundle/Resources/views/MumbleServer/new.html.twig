@@ -17,9 +17,19 @@
 #}
 
 {% extends "::layout.html.twig" %}
+
+{% block title %}
+    <a href="{{ path('mumble') }}"> 
+        <span class="icon" data-icon="&#x29;" title="{{ 'mumble.back'|trans }}"></span>
+    </a>
+    
+    {{ 'mumble.title'|trans }}
+{% endblock %}
+
+
 {% block content %}
 
-<legend><a href="{{ path('mumble') }}"><span class="titre">h</span></a>{{ 'mumble.add'|trans }}</legend>
+<h2>{{ 'mumble.add'|trans }}</h2>
 
     <form action="{{ path('mumble_create') }}" method="post" {{ form_enctype(form) }}>
        <fieldset id="validation">	

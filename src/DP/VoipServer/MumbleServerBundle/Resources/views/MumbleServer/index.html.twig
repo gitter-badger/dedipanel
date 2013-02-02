@@ -18,17 +18,26 @@
 
 {% extends "::layout.html.twig" %}
 
+{% block title %}
+    <a href="{{ path('mumble') }}"> 
+        <span class="icon" data-icon="&#x29;" title="{{ 'mumble.back'|trans }}"></span>
+    </a>
+    
+    {{ 'steam.title'|trans }}
+{% endblock %}
+
 {% block content %}
 
-<legend>Serveur Mumble </legend>
+    <h2>{{ 'mumble.title'|trans }}</h2>
+    
+    <ul id="top-nav" class="nav nav-tabs">
+        <li>
+            <a href="{{ path('mumble_new') }}">
+                {{ 'mumble.add'|trans }}
+            </a>
+        </li>
+    </ul>
 
-<div id="menu-legend" class="nav nav-tabs steam">
-    <li class="pull-right">
-        <a href="{{ path('mumble_new') }}">
-            {{ 'mumble.add'|trans }}
-        </a>
-    </li>
-</div>
 
 <div id="steam">
     
@@ -41,7 +50,7 @@
             </div>
             <div class="span9">
                 <div class="titre">
-                    <a href="{{ path('steam_show', {id: entity.id}) }}">{# {{ entity.name }} #}</a>
+                    <a href="{{ path('mumble_show', {id: entity.id}) }}">{# {{ entity.name }} #}</a>
                 </div>
 
                 <div class="description">

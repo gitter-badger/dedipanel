@@ -16,25 +16,28 @@
 
 mumble.title: Serveurs Mumble
 mumble.show: Voir
-mumble.list: Liste des Serveurs Steam
-mumble.add: Ajouter un serveur Steam
+mumble.list: Liste des Serveurs Mumble
+mumble.add: Installer un serveur Mumble
 mumble.edit: Modifier
 mumble.del: Supprimer
 mumble.back: Retour à la liste
 
-mumble.showTitle: Voir un serveur Steam
-mumble.editTitle: Modifier un serveur Steam
+mumble.showTitle: Voir un serveur Mumble
+mumble.editTitle: Modifier un serveur Mumble
 
 mumble.id: ID
 mumble.name: Nom
 mumble.port: Port
 mumble.game: Jeu
 mumble.icesecret: IceSecret Mumble
-steam.munin: Graphes munin activés ?
 mumble.IPAddress: Adresse IP
 
 mumble.selectMachine: Sélectionnez une machine
 mumble.addButton: Ajouter
+mumble.no : non
+mumble.yes : oui
+mumble.install : Installer mumble ?
+mumble.dir : nom du répertoire
 
 mumble.ended: Terminé
 mumble.start: Démarrer

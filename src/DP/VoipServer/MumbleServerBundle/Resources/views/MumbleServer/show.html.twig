@@ -17,9 +17,19 @@
 #}
 
 {% extends "::layout.html.twig" %}
-{% block title %}<a href="{{ path('mumble') }}"><span class="titre">h</span></a>{{ 'mumble.showTitle'|trans }}{% endblock %}
+
+{% block title %}
+    <a href="{{ path('mumble') }}"> 
+        <span class="icon" data-icon="&#x29;" title="{{ 'mumble.back'|trans }}"></span>
+    </a>
+    
+    {{ 'steam.title'|trans }}
+{% endblock %}
 
 {% block content %}
+
+<h2>{{ 'mumble.show'|trans }}</h2>
+
     <table class="record_properties">
         <tbody>
             <tr>
