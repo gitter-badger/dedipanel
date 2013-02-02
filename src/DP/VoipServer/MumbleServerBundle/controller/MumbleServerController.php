@@ -6,7 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use DP\VoipServer\MumbleServerBundle\Entity\MumbleServer;
-use DP\VoipServer\MumbleServerBundle\Form\MumbleServerType;
+use DP\VoipServer\MumbleServerBundle\Form\BaseMumbleServerType;
+use DP\VoipServer\MumbleServerBundle\Form\InstallMumbleServerType;
 
 /**
  * MumbleServer controller.
@@ -58,7 +59,7 @@ class MumbleServerController extends Controller
     public function newAction()
     {
         $entity = new MumbleServer();
-        $form   = $this->createForm(new MumbleServerType(), $entity);
+        $form   = $this->createForm(new BaseMumbleServerType(), $entity);
 
         return $this->render('DPMumbleServerBundle:MumbleServer:new.html.twig', array(
             'entity' => $entity,
@@ -73,17 +74,26 @@ class MumbleServerController extends Controller
     public function createAction(Request $request)
     {
         $entity  = new MumbleServer();
-        $form = $this->createForm(new MumbleServerType(), $entity);
+        $form = $this->createForm(new BaseMumbleServerType(), $entity);
         $form->bind($request);
 
         if ($form->isValid()) {
+            
+            $install = $form->get('install')->getData();
+            $twig = $this->get('twig');
+            
+            // On lance l'installation si le serveur n'est pas déjà sur la machine
+            if (!$install) {
+                $entity->installServer($twig);
+            }
+            
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
             return $this->redirect($this->generateUrl('mumble_show', array('id' => $entity->getId())));
         }
-
+        
         return $this->render('DPMumbleServerBundle:MumbleServer:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),

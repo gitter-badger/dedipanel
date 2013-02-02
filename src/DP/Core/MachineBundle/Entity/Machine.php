@@ -105,7 +105,7 @@ class Machine
      * @ORM\OneToMany(targetEntity="DP\GameServer\GameServerBundle\Entity\GameServer", mappedBy="machine", cascade={"persist"})
      */
     private $gameServers;
-<<<<<<< HEAD
+
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection() $voipServer
      * 
@@ -117,7 +117,6 @@ class Machine
     {
         return $this->voipServer;
     }
-=======
     
     /**
      * @var integer
@@ -126,7 +125,6 @@ class Machine
      */
     private $nbCore;
 
->>>>>>> origin/master
 
     public function __construct()
     {

@@ -53,13 +53,21 @@ class VoipServer {
     private $portMumble = 6502;
 
     /**
-     * @var string $iceSecret
+     * @var string $dir
      *
-     * @ORM\Column(name="iceSecret", type="string", length=32, nullable=true)
+     * @ORM\Column(name="dir", type="string", length=64)
+     * @Assert\NotBlank(message="mumbleServer.assert.dir")
+     */
+    protected $dir = 'mumble';
+    
+    /**
+     * @var string $repertoire
+     *
+     * @ORM\Column(name="repertoire", type="string", length=32, nullable=true)
      */
     private $iceSecret;
     
-        /**
+    /**
      * @ORM\ManyToOne(targetEntity="DP\Core\MachineBundle\Entity\Machine", inversedBy="voipserver")
      * @ORM\JoinColumn(name="machineId", referencedColumnName="id")
      * @Assert\NotNull(message="voipserver.assert.machine")
@@ -98,29 +106,7 @@ class VoipServer {
     {
         return $this->portMumble;
     }
-    
-    /**
-     * Set iceSecret
-     *
-     * @param integer $iceSecret
-     * @return VoipServer
-     */
-    public function seticeSecret($iceSecret)
-    {
-        $this->iceSecret = $iceSecret;
-    
-        return $this;
-    }
 
-    /**
-     * Get iceSecret
-     *
-     * @return integer 
-     */
-    public function geticeSecret()
-    {
-        return $this->iceSecret;
-    }
      /**
      * Set machine
      *
@@ -139,5 +125,51 @@ class VoipServer {
     public function getMachine()
     {
         return $this->machine;
+    }
+
+    /**
+     * Set dir
+     *
+     * @param string $dir
+     * @return VoipServer
+     */
+    public function setDir($dir)
+    {
+        $this->dir = $dir;
+    
+        return $this;
+    }
+
+    /**
+     * Get dir
+     *
+     * @return string 
+     */
+    public function getDir()
+    {
+        return $this->dir;
+    }
+
+    /**
+     * Set iceSecret
+     *
+     * @param string $iceSecret
+     * @return VoipServer
+     */
+    public function setIceSecret($iceSecret)
+    {
+        $this->iceSecret = $iceSecret;
+    
+        return $this;
+    }
+
+    /**
+     * Get iceSecret
+     *
+     * @return string 
+     */
+    public function getIceSecret()
+    {
+        return $this->iceSecret;
     }
 }
