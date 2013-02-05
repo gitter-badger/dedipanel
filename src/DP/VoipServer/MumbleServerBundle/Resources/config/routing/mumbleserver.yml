@@ -18,6 +18,10 @@ mumble_create:
 mumble_edit:
     pattern:  /{id}/edit
     defaults: { _controller: "DPMumbleServerBundle:MumbleServer:edit" }
+    
+mumble_install:
+    pattern:  /{id}/install
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:install" }
 
 mumble_update:
     pattern:  /{id}/update

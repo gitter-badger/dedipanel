@@ -75,6 +75,14 @@ class VoipServer {
     protected $machine;
 
     /**
+     * @var integer $installationStatus
+     *
+     * @ORM\Column(name="installationStatus", type="integer", nullable=true)
+     */
+    protected $installationStatus;
+    
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -181,5 +189,28 @@ class VoipServer {
     public function getAbsoluteDir()
     {
         return $this->getMachine()->getHome() . '/' . $this->getDir() . '/';
+    }
+
+    /**
+     * Set installationStatus
+     *
+     * @param integer $installationStatus
+     * @return VoipServer
+     */
+    public function setInstallationStatus($installationStatus)
+    {
+        $this->installationStatus = $installationStatus;
+    
+        return $this;
+    }
+
+    /**
+     * Get installationStatus
+     *
+     * @return integer 
+     */
+    public function getInstallationStatus()
+    {
+        return $this->installationStatus;
     }
 }

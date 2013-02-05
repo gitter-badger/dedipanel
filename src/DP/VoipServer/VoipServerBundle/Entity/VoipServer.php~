@@ -58,7 +58,7 @@ class VoipServer {
      * @ORM\Column(name="dir", type="string", length=64)
      * @Assert\NotBlank(message="mumbleServer.assert.dir")
      */
-    protected $dir;
+    protected $dir = 'mumble';
     
     /**
      * @var string $repertoire
@@ -74,6 +74,14 @@ class VoipServer {
      */
     protected $machine;
 
+    /**
+     * @var integer $installationStatus
+     *
+     * @ORM\Column(name="installationStatus", type="integer", nullable=true)
+     */
+    protected $installationStatus;
+    
+    
     /**
      * Get id
      *
@@ -106,29 +114,7 @@ class VoipServer {
     {
         return $this->portMumble;
     }
-    
-    /**
-     * Set iceSecret
-     *
-     * @param integer $iceSecret
-     * @return VoipServer
-     */
-    public function seticeSecret($iceSecret)
-    {
-        $this->iceSecret = $iceSecret;
-    
-        return $this;
-    }
 
-    /**
-     * Get iceSecret
-     *
-     * @return integer 
-     */
-    public function geticeSecret()
-    {
-        return $this->iceSecret;
-    }
      /**
      * Set machine
      *
@@ -147,5 +133,61 @@ class VoipServer {
     public function getMachine()
     {
         return $this->machine;
+    }
+
+    /**
+     * Set dir
+     *
+     * @param string $dir
+     * @return VoipServer
+     */
+    public function setDir($dir)
+    {
+        $this->dir = $dir;
+    
+        return $this;
+    }
+
+    /**
+     * Get dir
+     *
+     * @return string 
+     */
+    public function getDir()
+    {
+        return $this->dir;
+    }
+
+    /**
+     * Set iceSecret
+     *
+     * @param string $iceSecret
+     * @return VoipServer
+     */
+    public function setIceSecret($iceSecret)
+    {
+        $this->iceSecret = $iceSecret;
+    
+        return $this;
+    }
+
+    /**
+     * Get iceSecret
+     *
+     * @return string 
+     */
+    public function getIceSecret()
+    {
+        return $this->iceSecret;
+    }
+        
+    /**
+     * Get absolute path of server installation directory
+     * 
+     * @return string
+     */
+    public function getAbsoluteDir()
+    {
+        return $this->getMachine()->getHome() . '/' . $this->getDir() . '/';
     }
 }
