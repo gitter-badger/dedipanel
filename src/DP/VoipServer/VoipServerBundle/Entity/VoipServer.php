@@ -172,4 +172,14 @@ class VoipServer {
     {
         return $this->iceSecret;
     }
+        
+    /**
+     * Get absolute path of server installation directory
+     * 
+     * @return string
+     */
+    public function getAbsoluteDir()
+    {
+        return $this->getMachine()->getHome() . '/' . $this->getDir() . '/';
+    }
 }

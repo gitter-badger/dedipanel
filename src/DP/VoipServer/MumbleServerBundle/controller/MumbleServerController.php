@@ -59,7 +59,7 @@ class MumbleServerController extends Controller
     public function newAction()
     {
         $entity = new MumbleServer();
-        $form   = $this->createForm(new BaseMumbleServerType(), $entity);
+        $form   = $this->createForm(new InstallMumbleServerType(), $entity);
 
         return $this->render('DPMumbleServerBundle:MumbleServer:new.html.twig', array(
             'entity' => $entity,
@@ -74,7 +74,7 @@ class MumbleServerController extends Controller
     public function createAction(Request $request)
     {
         $entity  = new MumbleServer();
-        $form = $this->createForm(new BaseMumbleServerType(), $entity);
+        $form = $this->createForm(new InstallMumbleServerType(), $entity);
         $form->bind($request);
 
         if ($form->isValid()) {
@@ -114,7 +114,7 @@ class MumbleServerController extends Controller
             throw $this->createNotFoundException('Unable to find MumbleServer entity.');
         }
 
-        $editForm = $this->createForm(new MumbleServerType(), $entity);
+        $editForm = $this->createForm(new BaseMumbleServerType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('DPMumbleServerBundle:MumbleServer:edit.html.twig', array(
@@ -155,7 +155,41 @@ class MumbleServerController extends Controller
             'delete_form' => $deleteForm->createView(),
         ));
     }
+    /**
+     * Verification if mumble was installed
+     *
+     */
+    public function installAction($id)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $entity = $em->getRepository('DPVoipServerBundle:VoipServer')->find($id);
+        
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find SteamServer entity.');
+        }
+        
+        $status = $entity->getInstallationStatus();
+        
+        // On upload le scipt pour lancer,stopper la machine
+        if ($status == 1) {
+            $entity->uploadShellScripts($this->get('twig'));
+        }  
+        // On vérifie que l'installation n'est pas bloqué (si c'est le cas on la relance)
+        // L'install est extremement rapide, donc si elle n'est pas fini, c'est qu'il y a un problème
+        elseif ($status == 0) {
+            
+            $delete = $entity->removeServer($this->get('twig'));
+            
+            if($delete == 0)
+                $entity->installServer($this->get('twig'));
+                $this->setInstallationStatus (1);
+        }
 
+        $em->persist($entity);
+        $em->flush();
+        
+        return $this->redirect($this->generateUrl('mumble'));
+    }
     /**
      * Deletes a MumbleServer entity.
      *
@@ -166,6 +200,9 @@ class MumbleServerController extends Controller
         $form->bind($request);
 
         if ($form->isValid()) {
+            
+            $twig = $this->get('twig');
+            
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('DPVoipServerBundle:VoipServer')->find($id);
 
@@ -173,8 +210,16 @@ class MumbleServerController extends Controller
                 throw $this->createNotFoundException('Unable to find MumbleServer entity.');
             }
 
-            $em->remove($entity);
-            $em->flush();
+            $delete = $entity->removeServer($twig);
+            
+            if($delete === 0){
+                $em->remove($entity);
+                $em->flush();
+            }
+            else{
+                return $this->redirect($this->generateUrl('mumble'));
+            }
+            
         }
 
         return $this->redirect($this->generateUrl('mumble'));

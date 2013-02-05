@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Copyright (C) 2010-2012 Kerouanton Albin, Smedts Jérôme
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+CSP_FILE='cspromod_b108.zip'
+CSP_DLURL="http://dl.redline-hosting.net/public/$CSP_FILE"
+
+# @TODO: Ajout d'une vérif de la présence du packet ia32-libs
+# -n `uname -r | grep "\-64"` && -n `dpkg-query -W --showformat='${Status}\n' ia32-libs | grep 'install ok installed'`
+if [ $# -eq 1 ]; then
+    cd {{ installDir }}
+    
+    # S'il s'agit de cspromod, on installe css
+    # sur lequel on ajoute le mod via une archive
+    if [ "$1" = "cspromod" ]; then
+        JEU="Counter-Strike Source"
+    else
+        JEU="$1"
+    fi
+
+    # On commence par télécharger le hldsupdatetool.bin
+    echo "DL hldsupdatetool.bin" > install.log
+    wget http://storefront.steampowered.com/download/hldsupdatetool.bin
+
+    # On lui donne les droits et on l'exécute afin de récupérer l'updater steam
+    chmod 750 ./hldsupdatetool.bin && ./hldsupdatetool.bin <<< "yes"
+
+    # Il ne sert plus, on le supprime
+    rm -f hldsupdatetool.bin
+
+    # Puis on lance l'exécution de steam afin de mettre à jour l'exécutable
+    echo "Steam updating" >> install.log
+    ./steam
+    sleep 1
+    ./steam
+    sleep 1
+
+    # Et on lance l'install du jeu
+    echo "Game install" >> install.log
+    ./steam -command update -game "$JEU" -dir . -verify_all -retry
+
+    # Si on souhaite installer cspromod, on telecharge l'archive du mod et on la decompresse
+    if [ "$1" = "cspromod" ]; then
+        mkdir orangebox && mv hl2 orangebox/
+        ./steam -command update -game "orangebox" -dir . -verify_all -retry
+        cd orangebox
+        wget "$CSP_DLURL"
+        unzip -u "$CSP_FILE"
+        rm -f $CSP_FILE
+    fi
+    
+    echo "Install ended" >> install.log
+else
+	echo "Usage: $0 game"
+fi
