@@ -27,6 +27,11 @@ mumble_update:
     pattern:  /{id}/update
     defaults: { _controller: "DPMumbleServerBundle:MumbleServer:update" }
     requirements: { _method: post }
+    
+mumble_changeState:
+    pattern:  /{id}/{state}
+    defaults: { _controller: "DPSteamServerBundle:SteamServer:changeState" }
+    requirements: { state: "start|stop|restart" }
 
 mumble_delete:
     pattern:  /{id}/delete

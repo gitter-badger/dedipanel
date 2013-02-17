@@ -38,6 +38,8 @@ mumble.no : non
 mumble.yes : oui
 mumble.install : Installer mumble ?
 mumble.dir : nom du répertoire
+mumble.installProgress : Installation en Cours! Actualliser
+mumble.installProgressBug : L'installation semble avoir bug. Relancer l'installation ! 
 
 mumble.ended: Terminé
 mumble.start: Démarrer

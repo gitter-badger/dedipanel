@@ -51,15 +51,17 @@
         </tbody>
     </table>
 
-    <form action="{{ path('mumble_edit', { 'id': entity.id }) }}" method="post">
-        <fieldset id="validation">        
-            <input type="submit" value="{{ 'mumble.edit'|trans }}" name="submit" class="submit">      
-        </fieldset>
-    </form>
+    <div class="form-group clearfix">
+        <form action="{{ path('mumble_edit', { 'id': entity.id }) }}" method="post" class="form-edit">          
+            <div class="form-actions">
+                <button type="submit"  class="btn btn-primary">{{ 'mumble.edit'|trans }}</button>
+            </div>
+        </form>
 
-    <form action="{{ path('mumble_delete', { 'id': entity.id }) }}" method="post" class="deletebutton">
-        <input type="submit" value="{{ 'mumble.del'|trans }}" name="submit" class="delete">
-        {{ form_widget(delete_form) }}
-    </form>
+        <form action="{{ path('mumble_delete', { 'id': entity.id }) }}" method="post" class="form-delete">
+            {{ form_widget(delete_form) }}
 
+            <button type="submit"  class="btn btn-danger">{{ 'mumble.del'|trans }}</button>
+        </form>
+    </div>
 {% endblock %}

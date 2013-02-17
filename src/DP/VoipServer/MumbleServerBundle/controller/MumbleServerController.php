@@ -24,7 +24,7 @@ class MumbleServerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('DPVoipServerBundle:VoipServer')->findAll();
-
+          
         return $this->render('DPMumbleServerBundle:MumbleServer:index.html.twig', array(
             'entities' => $entities,
         ));
@@ -73,31 +73,34 @@ class MumbleServerController extends Controller
      */
     public function createAction(Request $request)
     {
+        
         $entity  = new MumbleServer();
         $form = $this->createForm(new InstallMumbleServerType(), $entity);
         $form->bind($request);
 
         if ($form->isValid()) {
-            
+
             $install = $form->get('install')->getData();
             $twig = $this->get('twig');
-            
+
             // On lance l'installation si le serveur n'est pas déjà sur la machine
             if (!$install) {
-                $entity->installServer($twig);
+                $status = $entity->installServer($twig);
             }
-            
+        
+            $entity->setInstallationStatus($status);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
             return $this->redirect($this->generateUrl('mumble_show', array('id' => $entity->getId())));
         }
-        
+
         return $this->render('DPMumbleServerBundle:MumbleServer:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        ));
+        )); 
     }
 
     /**
@@ -156,7 +159,7 @@ class MumbleServerController extends Controller
         ));
     }
     /**
-     * Verification if mumble was installed
+     * Verification if mumble is installed
      *
      */
     public function installAction($id)
@@ -168,27 +171,41 @@ class MumbleServerController extends Controller
             throw $this->createNotFoundException('Unable to find SteamServer entity.');
         }
         
-        $status = $entity->getInstallationStatus();
+        // on verifie avant toute chose que tout soit à jour avec le serveur
+        // et on enregistre tout dans la BDD
+        $status = $entity->verificationServer();
         
-        // On upload le scipt pour lancer,stopper la machine
-        if ($status == 1) {
-            $entity->uploadShellScripts($this->get('twig'));
-        }  
-        // On vérifie que l'installation n'est pas bloqué (si c'est le cas on la relance)
-        // L'install est extremement rapide, donc si elle n'est pas fini, c'est qu'il y a un problème
-        elseif ($status == 0) {
-            
-            $delete = $entity->removeServer($this->get('twig'));
-            
-            if($delete == 0)
+        $entity->setInstallationStatus($status);
+
+        // Si tout est bon c'est ok, sinon on reinstalle le serveur
+        if($status != 2) {
+            $delete = $entity->removeServer();
+
+            if($delete == 0){
                 $entity->installServer($this->get('twig'));
-                $this->setInstallationStatus (1);
-        }
+            }
+        }            
 
         $em->persist($entity);
         $em->flush();
         
         return $this->redirect($this->generateUrl('mumble'));
+    }
+    /*
+     * Change State of server
+     */
+    public function changeStateAction($id, $state)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $entity = $em->getRepository('DPSteamServerBundle:SteamServer')->find($id);
+        
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find SteamServer entity.');
+        }
+        
+        $entity->changeStateServer($state);
+        
+        return $this->redirect($this->generateUrl('steam'));
     }
     /**
      * Deletes a MumbleServer entity.

@@ -34,12 +34,6 @@ class BaseMumbleServerType extends AbstractType
             ->add('portMumble', 'number')
             ->add('dir', 'text', array( 'label' => 'mumble.dir'))
             ->add('iceSecret', 'password')
-            ->add('install', 'choice', array(
-                                      'choices'   => array(1 => 'mumble.yes', 0 => 'mumble.no'), 
-                                      'label'     => 'mumble.install', 
-                                      'mapped'    => false, 
-                                      'expanded'  => true 
-                                      ))
         ;
     }
 

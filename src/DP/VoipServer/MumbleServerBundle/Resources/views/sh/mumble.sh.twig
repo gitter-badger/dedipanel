@@ -16,3 +16,52 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+SCREEN_NAME="{{ screenName }}"
+STATUS=`ps aux | grep SCREEN | grep "$SCREEN_NAME" | wc -l`
+
+case "$1" in
+    start)
+        if [ $STATUS -eq 0 ]; then
+            echo "starting "
+            cd {{ binDir }}
+            
+            screen -dmS $SCREEN_NAME ./murmur.x86
+            
+            echo "."
+        fi
+        
+        exit ${?}
+    ;;
+
+    stop)
+        if [ $STATUS -ne 0 ]; then
+            echo "stopping"
+            PID=`ps aux | grep SCREEN | grep "$SCREEN_NAME " | awk '{print $2}'`
+            kill $PID
+            echo "."
+        fi
+
+        exit ${?}
+    ;;
+
+    restart)
+        $0 stop
+        sleep 1
+        $0 start
+
+        exit ${?}
+    ;;
+
+    status)        
+        if [ $STATUS -eq 0 ]; then
+            echo "Not running."
+        else
+            echo "Started."
+        fi
+    ;;
+    
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit ${?}
+    ;;
+esac

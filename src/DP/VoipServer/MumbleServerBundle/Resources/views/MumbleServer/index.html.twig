@@ -19,7 +19,7 @@
 {% extends "::layout.html.twig" %}
 
 {% block bundleStylesheets %}
-    <link rel="stylesheet" media="screen" href="{{ asset('bundles/dpmumbleserver/css/game.css') }}" />
+<link rel="stylesheet" media="screen" href="{{ asset('bundles/dpmumbleserver/css/game.css') }}" />
 {% endblock %}
 
 
@@ -44,79 +44,87 @@
         </li>
     </ul>
 
+
     <div id="steam" class="server-list">
-        
+
         {% for entity in entities %}
-            <div class="server-item clearfix">
-                
-                {% if entity.getInstallationStatus == '2' %}
-                    <div class="principal clearfix">
-                        <div class="game-image">
+        <div class="server-item clearfix">
 
-                            <a href="{{ path('mumble_show', {'id': entity.id }) }}">
-                                <img src="../images/mumble/mumble.png" alt="mumble" />
-                            </a>
+            {% if entity.getInstallationStatus == '2' %}
+                <div class="principal clearfix">
+                    <div class="row">
+                        <div class="span3">
+                            <div class="mumble-image">
+
+                                <a href="{{ path('mumble_show', {'id': entity.id }) }}">
+                                    <img src="../images/mumble/mumble.png" alt="mumble" />
+                                </a>
+                            </div>
                         </div>
-
-                        <div class="infos">
+                        <div class="span3">
                             <div class="titre">
                                 <a href="{{ path('mumble_show', {id: entity.id}) }}">Mumble</a>
                             </div>
 
                             <div class="description">
-                                    <span class="address"></span>
-
+                                <span class="address">{{ entity.machine.publicIp }}:{{ entity.portMumble }}</span>
                             </div>
+                        </div>
+                            
+                         <div class="span4">
+                            <div class="infos">
+                                <div class="actions clearfix">                        
+                                    <a href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'stop' }) }} ">
+                                        <span class="icon" data-icon="&#x24;" title="{{ 'game.stop'|trans }}"></span>
+                                    </a>
+                                    <a  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'restart' }) }}">
+                                        <span class="icon" data-icon="&#x27;" title="{{ 'game.restart'|trans }}"></span>
+                                    </a>
 
-                            <div class="actions clearfix">                        
-                                <a {# href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'stop' }) }} "#}>
-                                    <span class="icon" data-icon="&#x24;" title="{{ 'game.stop'|trans }}"></span>
-                                </a>
-                                <a {#  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'restart' }) }}"#}>
-                                    <span class="icon" data-icon="&#x27;" title="{{ 'game.restart'|trans }}"></span>
-                                </a>
+                                    <a  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'start' }) }}">
+                                        <span class="icon" data-icon="&#x22;" title="{{ 'game.start'|trans }}"></span>
+                                    </a>
 
-                                <a {#  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'start' }) }}"#}>
-                                    <span class="icon" data-icon="&#x22;" title="{{ 'game.start'|trans }}"></span>
-                                </a>
+                                    <a href="{{ path('mumble_show', {id: entity.id}) }}" class="slide">
+                                        <span class="icon" data-icon="&#x21;" title="{{ 'mumble.show'|trans }}"></span>
+                                    </a>
 
-                                <a href="{{ path('mumble_show', {id: entity.id}) }}" class="slide">
-                                    <span class="icon" data-icon="&#x21;" title="{{ 'mumble.show'|trans }}"></span>
-                                </a>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
 
-                            </div>
-                        </div> 
+            {% else %}
+
+                <div class="principal clearfix">
+                    <div class="game-image">
+                        <a href="{{ path('mumble_show', {'id': entity.id }) }}">
+                            <img src="../images/mumble/mumble.png" alt="{{ 'mumble.show'|trans }}" />
+                        </a>
                     </div>
 
-                {% else %}
-
-                    <div class="principal clearfix">
-                        <div class="game-image">
-                            <a href="{{ path('mumble_show', {'id': entity.id }) }}">
-                                <img src="../images/mumble/mumble.png" alt="{{ 'mumble.show'|trans }}" />
-                            </a>
+                    <div class="infos">
+                        <div class="titre">
+                            <a href="{{ path('mumble_show', {id: entity.id}) }}">{{ 'mumble.show'|trans }}</a>
                         </div>
 
-                        <div class="infos">
-                            <div class="titre">
-                                <a href="{{ path('mumble_show', {id: entity.id}) }}">{{ 'mumble.show'|trans }}</a>
-                            </div>
-
-                            <div class="description">
-                                {{ entity.machine.publicIp }}:{{ entity.portMumble }}
-                            </div>
+                        <div class="description">
+                            <span class="address">{{ entity.machine.publicIp }}:{{ entity.portMumble }}</span>
                         </div>
 
                         <div class="installation">
                             <div class="update-status">
-                                <img src="../images/icones/serveur/install.png" alt="{{ 'mumble.updateStatus'|trans }}" />
                                 <a href="{{ path('mumble_install', {id: entity.id }) }}">
-                                <img src="../images/icones/serveur/install.png" alt="{{ 'mumble.updateStatus'|trans }}">
-                                    </a>
+                                    <img src="../images/icones/serveur/install.png" alt="{{ 'mumble.updateStatus'|trans }}">
+                                </a>
+                                {% if entity.getInstallationStatus == '1' %}{{ 'mumble.installProgress'|trans }}{% endif %}
+                                {% if entity.getInstallationStatus == '0' %}{{ 'mumble.installProgressBug'|trans }}{% endif %}
                             </div>
                         </div>
                     </div>
-            {% endif %}
+             {% endif %}
+            
         </div>
     {% endfor %}
 
