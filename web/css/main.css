@@ -122,9 +122,15 @@ header nav li a span {
 
 /* Sidebar */
 #sidebar {
+<<<<<<< HEAD
     width: 20%;
     background: #262626;
     float: left;
+=======
+	width: 21%;
+	background: #262626;
+	float: left;
+>>>>>>> origin/master
 }
 #sidebar #logo {
     max-width: 195px;
@@ -178,6 +184,7 @@ header nav li a span {
 
 /* Inner */
 #inner {
+<<<<<<< HEAD
     background: #DBDBDB;
     float: left;
     width: 80%;
@@ -196,6 +203,26 @@ header nav li a span {
     box-shadow: 0 0 1px 0 white;
     background-color: #CECECE;
     color: #646464;
+=======
+	background: #DBDBDB;
+	float: left;
+	width: 79%;
+	left: 79%;
+	min-height: 100%;
+	position: relative;
+	top: 0;
+	left: 0;
+}
+
+#inner h1#title {
+	margin: 15px 0 10px 0;
+	padding: 8px 0 3px 15px;
+    line-height: normal;
+    min-height: 31px;
+	box-shadow: 0 0 1px 0 white;
+	background-color: #CECECE;
+	color: #646464;
+>>>>>>> origin/master
     font-family: Tahoma;
     font-size: 26px;
     font-weight: normal;
@@ -211,11 +238,19 @@ header nav li a span {
 }
 
 #inner #page-content {
+<<<<<<< HEAD
     margin: 15px;
     padding: 10px;
     background-color: whiteSmoke;
     box-shadow: inset 0 0 0 1px #BBB, 0 0 0 1px #E4E4E4;
     margin-bottom: 52px;
+=======
+	margin: 15px;
+	padding: 10px;
+	background-color: whiteSmoke;
+	box-shadow: inset 0 0 0 1px #BBB, 0 0 0 1px #E4E4E4;
+	margin-bottom: 62px;
+>>>>>>> origin/master
     min-height: 155px;
 }
 
@@ -258,9 +293,16 @@ footer {
     bottom: 0;
 }
 footer p {
+<<<<<<< HEAD
     text-align: center;
     color: #818181;
     font-size: 11px;
+=======
+	text-align: center;
+	color: #818181;
+	font-size: 11px;
+	margin: 10px 0;
+>>>>>>> origin/master
 }
 
 #inner #page-content ul {
@@ -292,14 +334,20 @@ label {
     display: block;
     float: left;
 }
+input[type="radio"], input[type="checkbox"] {
+    margin: 4px 5px 0;
+    float: left;
+}
 input[type="radio"] + label, input[type="checkbox"] + label {
     width: auto;
     margin: 0 20px 0 5px;
 }
-input[type="radio"], input[type="checkbox"] {
-    margin: 4px 0 0;
-    float: left;
-}
+input[type="radio"] + label > .symfony-form-required, 
+/* input[type="radio"] + label > span:last-of-type, */ 
+input[type="checkbox"] + label > .symfony-form-required/*, 
+ input[type="checkbox"] + label > span:last-of-type */ {
+	display: none;
+} 
 
 .form-group {
     border-top: 1px solid #ddd;
@@ -318,7 +366,8 @@ input[type="radio"], input[type="checkbox"] {
     margin: 0;
     border-top: 0;
 }
-.form-group form.form-edit + form.form-delete {
+.form-group form.form-edit + form.form-delete, 
+.form-group form.form-delete + form.form-delete {
     margin-left: 10px;
 }
 

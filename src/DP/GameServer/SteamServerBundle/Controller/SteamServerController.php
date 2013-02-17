@@ -25,6 +25,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use DP\GameServer\SteamServerBundle\Entity\SteamServer;
 use DP\GameServer\SteamServerBundle\Form\AddSteamServerType;
 use DP\GameServer\SteamServerBundle\Form\EditSteamServerType;
+use Symfony\Component\Form\FormError;
+use DP\GameServer\SteamServerBundle\Exception\InstallAlreadyStartedException;
 
 /**
  * SteamServer controller.
@@ -64,8 +66,9 @@ class SteamServerController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('DPSteamServerBundle:SteamServer:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'entity'            => $entity,
+            'delete_form'       => $deleteForm->createView(),
+            'delete_all_form'   => $deleteForm->createView(),  
         ));
     }
 
@@ -99,20 +102,27 @@ class SteamServerController extends Controller
             $alreadyInstalled = $form->get('alreadyInstalled')->getData();
             $twig = $this->get('twig');
             
-            // On lance l'installation si le serveur n'est pas déjà sur la machine, 
-            // Sinon on upload les scripts nécessaires au panel
-            if (!$alreadyInstalled) {
-                $entity->installServer($twig);
+            // Affichage d'une erreur sur le formulaire si l'installation est déjà en cours.
+            try {
+                // On lance l'installation si le serveur n'est pas déjà sur la machine, 
+                // Sinon on upload les scripts nécessaires au panel
+                if (!$alreadyInstalled) {
+                    $entity->installServer($twig);
+                }
+                else {
+                    $entity->uploadShellScripts($twig);
+                }
+                
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->persist($entity);
+                $em->flush();
+    
+                return $this->redirect($this->generateUrl('steam_show', array('id' => $entity->getId())));
             }
-            else {
-                $entity->uploadShellScripts($twig);
+            catch (InstallAlreadyStartedException $e) {
+                $trans = $this->get('translator')->trans('game.installAlreadyStarted');
+                $form->addError(new FormError($trans));
             }
-            
-            $em = $this->getDoctrine()->getEntityManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('steam_show', array('id' => $entity->getId())));
         }
 
         return $this->render('DPSteamServerBundle:SteamServer:new.html.twig', array(
@@ -142,6 +152,7 @@ class SteamServerController extends Controller
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
+            'delete_all_form'   => $deleteForm->createView(), 
         ));
     }
 
@@ -175,6 +186,7 @@ class SteamServerController extends Controller
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
+            'delete_all_form' => $deleteForm->createView(),
         ));
     }
 
@@ -182,7 +194,7 @@ class SteamServerController extends Controller
      * Deletes a SteamServer entity.
      *
      */
-    public function deleteAction($id)
+    public function deleteAction($id, $fromMachine)
     {
         $form = $this->createDeleteForm($id);
         $request = $this->getRequest();
@@ -196,11 +208,15 @@ class SteamServerController extends Controller
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find SteamServer entity.');
             }
+            
+            if ($fromMachine) {
+                $entity->removeServer();
+            }
 
             $em->remove($entity);
             $em->flush();
         }
-
+        
         return $this->redirect($this->generateUrl('steam'));
     }
 
@@ -241,6 +257,9 @@ class SteamServerController extends Controller
                 $entity->uploadShellScripts($this->get('twig'));
                 $entity->removeInstallationFiles();
             }
+            elseif ($newStatus === null) {
+                $entity->installServer($this->get('twig'));
+            }
         } 
         // On vérifie que l'installation n'est pas bloqué (ou non démarré)
         elseif ($status === null) {
@@ -279,5 +298,20 @@ class SteamServerController extends Controller
         return $this->render('DPSteamServerBundle:SteamServer:query.html.twig', array(
             'entity' => $entity
         ));
+    }
+    
+    public function regenAction($id)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $entity = $em->getRepository('DPSteamServerBundle:SteamServer')->find($id);
+        
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find SteamServer entity.');
+        }
+        
+        // Régénération des scripts du panel
+        $entity->uploadHldsScript($this->get('twig'));
+        
+        return $this->redirect($this->generateUrl('steam_show', array('id' => $id)));
     }
 }

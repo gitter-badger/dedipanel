@@ -39,7 +39,7 @@ class MinecraftServer extends GameServer
      * @var integer $queryPort
      *
      * @ORM\Column(name="queryPort", type="integer", nullable=true)
-     * @Assert\Min(limit="1", message="minecraft.assert.queryPort.min")
+     * @Assert\Min(limit="1024", message="minecraft.assert.queryPort.min")
      * @Assert\Max(limit="65536", message="minecraft.assert.queryPort.max")
      */
     protected $queryPort;
@@ -48,7 +48,7 @@ class MinecraftServer extends GameServer
      * @var integer $rconPort
      *
      * @ORM\Column(name="rconPort", type="integer")
-     * @Assert\Min(limit="1", message="minecraft.assert.rconPort.min")
+     * @Assert\Min(limit="1024", message="minecraft.assert.rconPort.min")
      * @Assert\Max(limit="65536", message="minecraft.assert.rconPort.max")
      */
     protected $rconPort;
@@ -265,29 +265,35 @@ class MinecraftServer extends GameServer
                 ->exec($scriptPath . ' ' . $state);
     }
     
-    public function uploadDefaultServerPropertiesFile(\Twig_Environment $twig)
+    public function uploadDefaultServerPropertiesFile()
     {
-        $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
-        $cfgPath = $this->getAbsoluteDir() . 'server.properties';
+        $template = $this->getGame()->getConfigTemplate();
         
-        // Supression du fichier s'il existe déjà
-        $sec->exec('if [ -e ' . $cfgPath . ']; then rm ' . $cfgPath . '; fi');
+        if (!empty($template)) {
+            $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
+            $cfgPath = $this->getAbsoluteDir() . 'server.properties';
+
+            // Supression du fichier s'il existe déjà
+            $sec->exec('if [ -e ' . $cfgPath . ']; then rm ' . $cfgPath . '; fi');
+
+            $env = new \Twig_Environment(new \Twig_Loader_String());
+            $cfgFile = $env->render($template, array(
+                'serverPort'    => $this->getPort(), 
+                'queryPort'     => $this->getQueryPort(), 
+                'rconPort'      => $this->getRconPort(), 
+                'rconPassword'  => $this->getRconPassword(), 
+                'maxPlayers'    => $this->getMaxplayers(), 
+                'serverName'    => $this->getName(), 
+                'ip'            => $this->getMachine()->getPublicIp(), 
+            ));
+
+            return $sec->upload($cfgPath, $cfgFile, 0750);
+        }
         
-        $template = 'DPMinecraftServerBundle:cfg:server.properties.' . $this->getGame()->getInstallName() . '.twig';
-        $cfgFile = $twig->render($template, array(
-            'serverPort'    => $this->getPort(), 
-            'queryPort'     => $this->getQueryPort(), 
-            'rconPort'      => $this->getRconPort(), 
-            'rconPassword'  => $this->getRconPassword(), 
-            'maxPlayers'    => $this->getMaxplayers(), 
-            'serverName'    => $this->getName(), 
-            'ip'            => $this->getMachine()->getPublicIp(), 
-        ));
-        
-        return $sec->upload($cfgPath, $cfgFile, 0750);
+        return false;
     }
     
-    public function modifyServerConfig()
+    public function modifyServerPropertiesFile()
     {
         // Variables à modifier dans le fichier server.properties
         $varToChange = array(
@@ -322,6 +328,8 @@ class MinecraftServer extends GameServer
                 unset($varToChange[$var]);
             }
         }
+        // Suppression de la référence
+        unset($line);
         
         // S'il reste des variables dans l'array $varToChange
         // On ajoute les lignes au fichier 
@@ -354,5 +362,19 @@ class MinecraftServer extends GameServer
         $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
         $sec->upload($scriptPath, $pluginScript);
         $sec->exec($screenCmd);
+    }
+    
+    public function removeServer()
+    {
+        $screenName = $this->getScreenName();
+        $serverDir = $this->getAbsoluteDir();
+        $scriptPath = $serverDir . 'minecraft.sh';
+        
+        $pgrep = '`ps aux | grep SCREEN | grep "' . $screenName . ' " | grep -v grep | wc -l`';
+        $cmd  = 'if [ ' . $pgrep . ' != "0" ]; then ';
+        $cmd .= $scriptPath . ' stop; fi; rm -Rf ' . $serverDir . ';';
+        
+        $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
+        $sec->exec($cmd);
     }
 }

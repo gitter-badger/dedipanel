@@ -20,7 +20,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             
-//            new Symfony\Bundle\DoctrineMigrationsBundle\DoctrineMigrationsBundle(),
+            // new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(), 
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             
             new FOS\UserBundle\FOSUserBundle(),
@@ -47,7 +47,6 @@ class AppKernel extends Kernel
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-            $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
             
             $bundles[] = new DP\Core\DistributionBundle\DPDistributionBundle();

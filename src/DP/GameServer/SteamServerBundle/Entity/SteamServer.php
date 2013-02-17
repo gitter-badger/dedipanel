@@ -24,6 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 use DP\GameServer\GameServerBundle\Entity\GameServer;
 use DP\Core\MachineBundle\PHPSeclibWrapper\PHPSeclibWrapper;
 use DP\Core\GameBundle\Entity\Plugin;
+use DP\GameServer\SteamServerBundle\Exception\InstallAlreadyStartedException;
 
 /**
  * DP\GameServer\SteamServerBundle\Entity\SteamServer
@@ -179,17 +180,27 @@ class SteamServer extends GameServer {
         $logPath = $installDir . 'install.log';
         $screenName = $this->getDir();
         $installName = $this->game->getInstallName();
-        
+
         $mkdirCmd = 'if [ ! -e ' . $installDir . ' ]; then mkdir ' . $installDir . '; fi';
-        $screenCmd  = 'screen -dmS ' . $screenName . ' ' . $scriptPath . ' "' . $installName . '"';
         
-        $installScript = $twig->render('DPSteamServerBundle:sh:install.sh.twig', 
-            array('installDir' => $installDir));
+        $pgrep = '`ps aux | grep SCREEN | grep "' . $screenName . ' " | grep -v grep | wc -l`';
+        $screenCmd  = 'if [ ' . $pgrep . ' = "0" ]; then ';
+        $screenCmd .= 'screen -dmS ' . $screenName . ' ' . $scriptPath . ' "' . $installName . '"; ';
+        $screenCmd .= 'else echo "Installation is already in progress."';
+        
+        $installScript = $twig->render(
+            'DPSteamServerBundle:sh:install.sh.twig', 
+            array('installDir' => $installDir)
+        );
         
         $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
         $sec->exec($mkdirCmd);
         $sec->upload($scriptPath, $installScript);
-        $sec->exec($screenCmd);
+        $result = $sec->exec($screenCmd);
+        
+        if ($result == 'Installation is already in progress.') {
+            throw new InstallAlreadyStartedException();
+        }
         
         $this->installationStatus = 0;
     }  
@@ -208,14 +219,17 @@ class SteamServer extends GameServer {
     {
         $absDir = $this->getAbsoluteDir();
         $logPath = $absDir . 'install.log';
+        $logCmd = 'if [ -f ' . $logPath . ' ]; then cat ' . $logPath . '; else echo "File not found exception."; fi; ';
         
         $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
-        $installLog = $sec->exec('cat ' . $logPath);
+        $installLog = $sec->exec($logCmd);
         
         if (strpos($installLog, 'Install ended') !== false) {
             // Si l'installation est terminé, on supprime le fichier de log et le script
             $sec->exec('rm -f' . $absDir . 'install.log ' . $absDir . 'install.sh');
-           return 100; // 101 == serveur installé
+           // 100 = serveur installé
+           // 101 = serveur installé + config uploadé
+           return 100;
         }
         elseif (strpos($installLog, 'Game install') !== false) {
             // Si on en est rendu au téléchargement des données, 
@@ -238,7 +252,8 @@ class SteamServer extends GameServer {
                     $percentPos = strpos($line, '%');
                     
                     if ($percentPos !== false) {
-                        return substr($line, $percentPos-5, 5);
+                        $percent = substr($line, $percentPos-5, 5);
+                        $percent = ($percent > 2) ? $percent : 2;
                     }
                 }
             }
@@ -249,8 +264,11 @@ class SteamServer extends GameServer {
         elseif (strpos($installLog, 'DL hldsupdatetool.bin')) {
             return 1;
         }
+        elseif ($installLog == 'File not found exception.') {
+            return null;
+        }
         else {
-            return 0;
+            throw new \ErrorException('Impossible de définir le statut de l\'installation du serveur.');
         }
     }
     
@@ -262,7 +280,7 @@ class SteamServer extends GameServer {
         // Upload du script de gestion de l'hltv
         $uploadHltv = $this->uploadHltvScript($twig);
         
-        // Upload d'un fichier server.cfg par défaut (si celui-ci n'existe pas)
+        // Création d'un ficier server.cfg vide (si celui-ci n'existe pas)
         $this->createDefaultServerCfgFile();
         
         $this->installationStatus = 101;
@@ -326,6 +344,50 @@ class SteamServer extends GameServer {
         $cfgPath .= 'server.cfg';
         
         return $sec->exec('if [ ! -e ' . $cfgPath . ' ]; then touch ' . $cfgPath . '; fi');
+    }
+    
+    public function uploadDefaultServerCfgFile()
+    {
+        $template = $this->getGame()->getConfigTemplate();
+        
+        if (!empty($template)) {
+            $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
+            $cfgPath = $this->getServerCfgPath();
+            
+            $env = new \Twig_Environment(new \Twig_Loader_String());
+            $cfgFile = $env->render($template, array(
+                'hostname' => $this->getServerName(), 
+            ));
+
+            return $sec->upload($cfgPath, $cfgFile, 0750);
+        }
+        
+        return false;
+    }
+    
+    public function modifyServerCfgFile()
+    {
+        $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
+        $cfgPath = $this->getServerCfgPath();
+        
+        $remoteFile = $sec->getRemoteFile($cfgPath);
+        $fileLines = explode("\r\n", $remoteFile);
+        
+        $pattern = '#^hostname "(.+)"$#';
+        $replacement = 'hostname "' . $this->getServerName() . '"';
+        
+        foreach ($fileLines AS &$line) {
+            if ($line == '' || substr($line, 0, 2) == '//') continue;
+            
+            if (preg_match($pattern, $line)) {
+                $line = preg_replace($pattern, $replacement, $line);
+            }
+        }
+        // Suppression de la référence
+        unset($line);
+        
+        // Upload du nouveau fichier
+        return $sec->upload($cfgPath, implode("\r\n", $fileLines));
     }
     
     public function changeStateServer($state)
@@ -435,5 +497,37 @@ class SteamServer extends GameServer {
     public function removeAutoReboot()
     {
         return $this->getMachine()->removeFromCrontab($this->getAbsoluteHldsScriptPath());
+    }
+    
+    public function getServerCfgPath()
+    {
+        $cfgPath = $this->getAbsoluteGameContentDir();
+        if ($this->getGame()->isSource() || $this->getGame()->isOrangebox()) {
+            $cfgPath .= 'cfg/';
+        }
+        
+        return $cfgPath . 'server.cfg';
+    }
+    
+    public function getServerName()
+    {
+        return $this->getName();
+    }
+
+    public function removeServer()
+    {
+        $screenName = $this->getScreenName();
+        $scriptPath = $this->getAbsoluteHldsScriptPath();
+        $serverPath = $this->getAbsoluteDir();
+        
+        // On commence par vérifier que le serveur n'est pas lancé (sinon on l'arrête)
+        $pgrep = '`ps aux | grep SCREEN | grep "' . $screenName . ' " | grep -v grep | wc -l`';
+        $cmd  = 'if [ ' . $pgrep . ' != "0" ]; then ';
+        $cmd .= $scriptPath . ' stop; fi; ';
+        // Puis on supprime complètement le dossier du serveur
+        $cmd .= 'rm -Rf ' . $serverPath;
+        
+        $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
+        $sec->exec($cmd);
     }
 }

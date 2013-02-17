@@ -21,8 +21,25 @@
     <link rel="stylesheet" type="text/css" media="screen" href="{{ asset('bundles/dpdistribution/css/install.css') }}" />
 {% endblock %}
 
+<<<<<<< HEAD:src/DP/Core/DistributionBundle/Resources/views/Configurator/layout.html.twig
 {% block body %}
     <h1>{{ 'configurator.installer'|trans }}</h1>
     
+=======
+{% block baseBody %}
+     <div class="titre">
+         <h1>{{ 'configurator.installer'|trans }}</h1>
+     </div>
+>>>>>>> origin/master:app/Resources/views/layout-installer.html.twig
     <div id="page-content">{% block content %}{% endblock %}</div>
+    
+    <footer>
+        <p>
+            DediPanel - Code & Design par Von et NiR<br /> 
+            
+            <a href="http://www.dedicated-panel.net">dedicated-panel.net</a> | 
+            <a href="http://wiki.dedicated-panel.net">wiki</a> | 
+            <a href="http://forum.dedicated-panel.net">forum</a>
+        </p>
+    </footer>
 {% endblock %}

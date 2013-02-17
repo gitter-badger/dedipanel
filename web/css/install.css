@@ -40,7 +40,7 @@ header {
     border-bottom: 1px solid rgb(167, 167, 167);
     padding-bottom: 135px;
     height: 170px
-        -webkit-box-shadow: 1px 3px rgba(0, 0, 0, .25),inset 0 -1px 0 rgba(0, 0, 0, .1);
+    -webkit-box-shadow: 1px 3px rgba(0, 0, 0, .25),inset 0 -1px 0 rgba(0, 0, 0, .1);
     -moz-box-shadow: 0 1px 3px rgba(0,0,0,.25),inset 0 -1px 0 rgba(0,0,0,.1);
     box-shadow: 0 1px 3px rgba(0, 0, 0, .25),inset 0 -1px 0 rgba(0, 0, 0, .1);
 
@@ -69,7 +69,7 @@ legend{
     border-top: 1px solid #8A8A8A;
 }
 #page-content {   
-    min-height: 400px;
+    /*min-height: 400px;*/
     background-color: FFFFF;
     margin: 20px;
 }
@@ -149,11 +149,10 @@ footer {
 }
 
 footer p {
-    height: 13px;
     text-align: center;
     color: #818181;
     font-size: 11px;
-    margin-top: 2px;
+	margin: 0;
 }
 
 /* =============================================================== */
@@ -170,7 +169,7 @@ label {
     font-family: 'Yanone Kaffeesatz', arial, sans-serif;
     font-size: 16px;
     color: #666; 
-    width: 250px;
+    width: 275px;
     display: block;
     float: left;
 }
