@@ -16,34 +16,40 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-SCREEN_NAME="{{ screenName }}"
-STATUS=`ps aux | grep SCREEN | grep "$SCREEN_NAME" | wc -l`
+
+NAME="mumbletest"
+PATH="/home/dp/mumbletest/"
+BIN="murmur.x86"
+PIDFILE=$PATH$NAME.pid
+DAEMON=$PATH$BIN
+
+test -x $DAEMON || exit 0
 
 case "$1" in
     start)
-        if [ $STATUS -eq 0 ]; then
-            echo "starting "
-            cd {{ binDir }}
-            
-            screen -dmS $SCREEN_NAME ./murmur.x86
-            
-            echo "."
+        if [ -d $PIDFILE ]; 
+        then
+            /sbin/start-stop-daemon --start --quiet \
+                              --background \
+                              --make-pidfile $PIDFILE \
+                              --pidfile $PIDFILE \
+                              --exec $DAEMON
+        else
+            echo "Serveur already started";
         fi
-        
-        exit ${?}
     ;;
-
+    
     stop)
-        if [ $STATUS -ne 0 ]; then
-            echo "stopping"
-            PID=`ps aux | grep SCREEN | grep "$SCREEN_NAME " | awk '{print $2}'`
-            kill $PID
-            echo "."
-        fi
-
-        exit ${?}
+        if [ ! -d $PIDFILE ]; 
+        then    
+            /sbin/start-stop-daemon --stop --quiet \
+                              --retry=TERM/30/KILL/5 \
+                              --pidfile $PIDFILE
+        else
+            echo "Serveur already stoped";
+        fi    
     ;;
-
+    
     restart)
         $0 stop
         sleep 1
@@ -51,17 +57,18 @@ case "$1" in
 
         exit ${?}
     ;;
-
-    status)        
-        if [ $STATUS -eq 0 ]; then
-            echo "Not running."
+    status)
+        if [ ! -d $PIDFILE ];  
+        then
+            echo "Serveur already stoped";
         else
-            echo "Started."
-        fi
+            echo "Serveur already started";
+        fi        
     ;;
     
     *)
-        echo "Usage: $0 {start|stop|restart|status}"
-        exit ${?}
+    echo "Usage: $N {start|stop|restart|status}"
+    exit 3
     ;;
+    
 esac
