@@ -166,6 +166,7 @@ class MumbleServerController extends Controller
     {
         $em = $this->getDoctrine()->getEntityManager();
         $entity = $em->getRepository('DPVoipServerBundle:VoipServer')->find($id);
+        $twig = $this->get('twig');
         
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find SteamServer entity.');
@@ -175,17 +176,23 @@ class MumbleServerController extends Controller
         // et on enregistre tout dans la BDD
         $status = $entity->verificationServer();
         
-        $entity->setInstallationStatus($status);
-
-        // Si tout est bon c'est ok, sinon on reinstalle le serveur
+        // Si tout est bon c'est ok, sinon on upload le shell ou alors on refait l'install
         if($status != 2) {
-            $delete = $entity->removeServer();
-
-            if($delete == 0){
-                $entity->installServer($this->get('twig'));
+            if($status != 1){   
+                $delete = $entity->removeServer();
+                if($delete == 0) {
+                   $entity->installServer($this->get('twig'));
+                   $status = $entity->verificationServer(); 
+                }
             }
-        }            
-
+            else {
+                $entity->uploadShellScript($twig); 
+                $status = $entity->verificationServer();
+            }
+        }
+        
+        $entity->setInstallationStatus($status);
+        
         $em->persist($entity);
         $em->flush();
         
@@ -197,15 +204,15 @@ class MumbleServerController extends Controller
     public function changeStateAction($id, $state)
     {
         $em = $this->getDoctrine()->getEntityManager();
-        $entity = $em->getRepository('DPSteamServerBundle:SteamServer')->find($id);
+        $entity = $em->getRepository('DPVoipServerBundle:VoipServer')->find($id);
         
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find SteamServer entity.');
+            throw $this->createNotFoundException('Unable to find MumbleServer entity.');
         }
         
         $entity->changeStateServer($state);
         
-        return $this->redirect($this->generateUrl('steam'));
+        return $this->redirect($this->generateUrl('mumble'));
     }
     /**
      * Deletes a MumbleServer entity.
@@ -218,8 +225,6 @@ class MumbleServerController extends Controller
 
         if ($form->isValid()) {
             
-            $twig = $this->get('twig');
-            
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('DPVoipServerBundle:VoipServer')->find($id);
 
@@ -227,7 +232,7 @@ class MumbleServerController extends Controller
                 throw $this->createNotFoundException('Unable to find MumbleServer entity.');
             }
 
-            $delete = $entity->removeServer($twig);
+            $delete = $entity->removeServer();
             
             if($delete === 0){
                 $em->remove($entity);

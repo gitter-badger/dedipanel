@@ -30,7 +30,7 @@ mumble_update:
     
 mumble_changeState:
     pattern:  /{id}/{state}
-    defaults: { _controller: "DPSteamServerBundle:SteamServer:changeState" }
+    defaults: { _controller: "DPMumbleServerBundle:MumbleServer:changeState" }
     requirements: { state: "start|stop|restart" }
 
 mumble_delete:
