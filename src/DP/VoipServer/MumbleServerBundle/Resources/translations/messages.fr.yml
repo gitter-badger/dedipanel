@@ -29,8 +29,16 @@ mumble.id: ID
 mumble.name: Nom
 mumble.port: Port
 mumble.game: Jeu
-mumble.icesecret: IceSecret Mumble
-mumble.IPAddress: Adresse IP
+mumble.iceSecret: IceSecret
+mumble.portIce: Port du plugin Ice
+mumble.serverName: Nom du Serveur
+mumble.serverPassword: Mot de passe du serveur
+mumble.portMumble: Port du serveur
+mumble.maxUser: Nombre maximum d'utilisateur
+mumble.logName: Nom du fichier log
+mumble.logDuration: Durée du fichier de log
+mumble.welcomeText: Texte de bienvenue
+mumble.bandWidth: Bande passante par utlisateur
 
 mumble.selectMachine: Sélectionnez une machine
 mumble.addButton: Ajouter

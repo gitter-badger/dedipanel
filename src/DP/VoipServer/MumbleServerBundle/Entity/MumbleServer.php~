@@ -19,7 +19,7 @@ class MumbleServer extends VoipServer {
      *
      * @ORM\Column(name="serverName", type="string", length=32, nullable=true)
      */
-    private $serverName = '[Dedicated-Panel]';
+    private $serverName;
     /**
      * @var string serverPassword
      *
@@ -31,13 +31,13 @@ class MumbleServer extends VoipServer {
      *
      * @ORM\Column(name="maxUser", type="integer", nullable=true)
      */
-    private $maxUser = 100;
+    private $maxUser;
     /**
      * @var integer portIce
      *
      * @ORM\Column(name="portIce", type="integer")
      * @Assert\Min(limit=1, message="voipserver.assert.port")
-     * @Assert\Max(limit=999, message="voipserver.assert.port")
+     * @Assert\Max(limit=65536, message="voipserver.assert.port")
      */
     private $portIce = 6502;
     /**
@@ -66,282 +66,27 @@ class MumbleServer extends VoipServer {
      *
      * @ORM\Column(name="logName", type="string", length=16, nullable=true)
      */
-    private $logName = 'mumble-log';
+    private $logName;
     /**
      * @var integer logDuration
      *
      * @ORM\Column(name="logDuration", type="integer", nullable=true)
      */
-    private $logDuration = 31;
+    private $logDuration;
     /**
      * @var string welcomeText
      *
      * @ORM\Column(name="welcomeText", type="string", length=250, nullable=true)
-     * @Assert\Min(limit=0, message="voipserver.assert.port")
-     * @Assert\Max(limit=31, message="voipserver.assert.port")
      */
     private $welcomeText;
     /**
      * @var integer bandWidth
      *
      * @ORM\Column(name="bandWidth", type="integer", nullable=true)
-     * @Assert\Min(limit=0, message="voipserver.assert.port")
-     * @Assert\Max(limit=100000, message="voipserver.assert.port")
      */
-    private $bandWidth = 100000;
-
-    /**
-     * Set serverName
-     *
-     * @param string $serverName
-     * @return MumbleServer
-     */
-    public function setServerName($serverName)
-    {
-        $this->serverName = $serverName;
+    private $bandWidth;
     
-        return $this;
-    }
-
-    /**
-     * Get serverName
-     *
-     * @return string 
-     */
-    public function getServerName()
-    {
-        return $this->serverName;
-    }
-
-    /**
-     * Set serverPassword
-     *
-     * @param integer $serverPassword
-     * @return MumbleServer
-     */
-    public function setServerPassword($serverPassword)
-    {
-        $this->serverPassword = $serverPassword;
     
-        return $this;
-    }
-
-    /**
-     * Get serverPassword
-     *
-     * @return integer 
-     */
-    public function getServerPassword()
-    {
-        return $this->serverPassword;
-    }
-
-    /**
-     * Set maxUser
-     *
-     * @param integer $maxUser
-     * @return MumbleServer
-     */
-    public function setMaxUser($maxUser)
-    {
-        $this->maxUser = $maxUser;
-    
-        return $this;
-    }
-
-    /**
-     * Get maxUser
-     *
-     * @return integer 
-     */
-    public function getMaxUser()
-    {
-        return $this->maxUser;
-    }
-
-    /**
-     * Set portIce
-     *
-     * @param integer $portIce
-     * @return MumbleServer
-     */
-    public function setPortIce($portIce)
-    {
-        $this->portIce = $portIce;
-    
-        return $this;
-    }
-
-    /**
-     * Get portIce
-     *
-     * @return integer 
-     */
-    public function getPortIce()
-    {
-        return $this->portIce;
-    }
-
-    /**
-     * Set portMumble
-     *
-     * @param integer $portMumble
-     * @return MumbleServer
-     */
-    public function setPortMumble($portMumble)
-    {
-        $this->portMumble = $portMumble;
-    
-        return $this;
-    }
-
-    /**
-     * Get portMumble
-     *
-     * @return integer 
-     */
-    public function getPortMumble()
-    {
-        return $this->portMumble;
-    }
-
-    /**
-     * Set iceSecret
-     *
-     * @param string $iceSecret
-     * @return MumbleServer
-     */
-    public function setIceSecret($iceSecret)
-    {
-        $this->iceSecret = $iceSecret;
-    
-        return $this;
-    }
-
-    /**
-     * Get iceSecret
-     *
-     * @return string 
-     */
-    public function getIceSecret()
-    {
-        return $this->iceSecret;
-    }
-
-    /**
-     * Set dir
-     *
-     * @param string $dir
-     * @return MumbleServer
-     */
-    public function setDir($dir)
-    {
-        $this->dir = $dir;
-    
-        return $this;
-    }
-
-    /**
-     * Get dir
-     *
-     * @return string 
-     */
-    public function getDir()
-    {
-        return $this->dir;
-    }
-
-    /**
-     * Set logName
-     *
-     * @param string $logName
-     * @return MumbleServer
-     */
-    public function setLogName($logName)
-    {
-        $this->logName = $logName;
-    
-        return $this;
-    }
-
-    /**
-     * Get logName
-     *
-     * @return string 
-     */
-    public function getLogName()
-    {
-        return $this->logName;
-    }
-
-    /**
-     * Set logDuration
-     *
-     * @param integer $logDuration
-     * @return MumbleServer
-     */
-    public function setLogDuration($logDuration)
-    {
-        $this->logDuration = $logDuration;
-    
-        return $this;
-    }
-
-    /**
-     * Get logDuration
-     *
-     * @return integer 
-     */
-    public function getLogDuration()
-    {
-        return $this->logDuration;
-    }
-
-    /**
-     * Set welcomeText
-     *
-     * @param string $welcomeText
-     * @return MumbleServer
-     */
-    public function setWelcomeText($welcomeText)
-    {
-        $this->welcomeText = $welcomeText;
-    
-        return $this;
-    }
-
-    /**
-     * Get welcomeText
-     *
-     * @return string 
-     */
-    public function getWelcomeText()
-    {
-        return $this->welcomeText;
-    }
-
-    /**
-     * Set bandWidth
-     *
-     * @param integer $bandWidth
-     * @return MumbleServer
-     */
-    public function setBandWidth($bandWidth)
-    {
-        $this->bandWidth = $bandWidth;
-    
-        return $this;
-    }
-
-    /**
-     * Get bandWidth
-     *
-     * @return integer 
-     */
-    public function getBandWidth()
-    {
-        return $this->bandWidth;
-    }
     /*
      * 
      */
@@ -444,17 +189,17 @@ class MumbleServer extends VoipServer {
         $mumbleScript = $twig->render(
             'DPMumbleServerBundle:sh:mumble.sh.twig', array(
             'ip' => $screenName,
-            'portIce' => $this->portIce,
-            'icesecret' => $this->icesecret,
-            'logName' => $this->logName,
-            'binDir' => $this->binDir,
-            'welcomeText' => $this->welcomeText,
-            'portMumble' => $this->portMumble,
-            'bandWidth' => $this->bandWidth,
-            'user' => $this->maxUser,
-            'logDuration' => $this->logDuration,
-            'serverName' => $this->serverName,
-            'serverPassword' => $this->serverPassword,
+            'portIce' => $ini->portIce,
+            'icesecret' => $ini->icesecret,
+            'logName' => $ini->logName,
+            'binDir' => $ini->binDir,
+            'welcomeText' => $ini->welcomeText,
+            'portMumble' => $ini->portMumble,
+            'bandWidth' => $ini->bandWidth,
+            'user' => $ini->maxUser,
+            'logDuration' => $ini->logDuration,
+            'serverName' => $ini->serverName,
+            'serverPassword' => $ini->serverPassword,
                 ));
 
         $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());

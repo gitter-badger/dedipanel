@@ -186,7 +186,7 @@ class MumbleServerController extends Controller
                 }
             }
             else {
-                $entity->uploadShellScript($twig); 
+                $entity->uploadShellScript($twig);
                 $status = $entity->verificationServer();
             }
         }

@@ -29,11 +29,30 @@ class BaseMumbleServerType extends AbstractType
     {
         $builder
             ->add('machine', 'entity', array(
-                                       'label' => 'mumble.selectMachine', 
-                                       'class' => 'DPMachineBundle:Machine'))
-            ->add('portMumble', 'number')
-            ->add('dir', 'text', array( 'label' => 'mumble.dir'))
-            ->add('iceSecret', 'password')
+                    'label' => 'mumble.selectMachine', 
+                    'class' => 'DPMachineBundle:Machine'))
+            ->add('portIce', 'integer', array( 
+                    'label' => 'mumble.portIce'))
+            ->add('iceSecret', 'text', array( 
+                    'label' => 'mumble.iceSecret'))   
+            ->add('dir', 'text', array( 
+                    'label' => 'mumble.dir'))
+            ->add('serverName', 'text', array( 
+                    'label' => 'mumble.serverName'))
+            ->add('serverPassword', 'text', array( 
+                    'label' => 'mumble.serverPassword'))
+            ->add('portMumble', 'integer', array( 
+                    'label' => 'mumble.portMumble'))
+            ->add('maxUser', 'integer', array( 
+                    'label' => 'mumble.maxUser'))
+            ->add('logName', 'text', array( 
+                    'label' => 'mumble.logName'))
+            ->add('logDuration', 'integer', array( 
+                    'label' => 'mumble.logDuration'))
+            ->add('welcomeText', 'text', array( 
+                    'label' => 'mumble.welcomeText'))
+            ->add('bandWidth', 'integer', array( 
+                    'label' => 'mumble.bandWidth'))
         ;
     }
 
