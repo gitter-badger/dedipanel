@@ -18,7 +18,7 @@
 
 
 NAME="mumbletest"
-PATH="/home/dp/mumbletest/"
+PATH="{{ binDir }}"
 BIN="murmur.x86"
 PIDFILE=$PATH$NAME.pid
 DAEMON=$PATH$BIN
@@ -27,24 +27,25 @@ test -x $DAEMON || exit 0
 
 case "$1" in
     start)
-        if [ -d $PIDFILE ]; 
+        if [ ! -e $PIDFILE ]; 
         then
             /sbin/start-stop-daemon --start --quiet \
                               --background \
-                              --make-pidfile $PIDFILE \
                               --pidfile $PIDFILE \
                               --exec $DAEMON
+            echo "Serveur start";
         else
             echo "Serveur already started";
         fi
     ;;
     
     stop)
-        if [ ! -d $PIDFILE ]; 
+        if [ -e $PIDFILE ]; 
         then    
             /sbin/start-stop-daemon --stop --quiet \
                               --retry=TERM/30/KILL/5 \
                               --pidfile $PIDFILE
+            echo "serveur stop"
         else
             echo "Serveur already stoped";
         fi    
@@ -58,7 +59,7 @@ case "$1" in
         exit ${?}
     ;;
     status)
-        if [ ! -d $PIDFILE ];  
+        if [ ! -e $PIDFILE ];  
         then
             echo "Serveur already stoped";
         else

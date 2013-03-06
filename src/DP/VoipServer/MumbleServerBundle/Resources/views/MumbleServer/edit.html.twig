@@ -31,19 +31,19 @@
 <h2>{{ 'mumble.edit'|trans }}</h2>
 
 
-    <form action="{{ path('mumble_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-        <fieldset id="validation"> 
-            {{ form_widget(edit_form) }}
-            
-            <div class="form-actions">
-                <button type="submit"  class="btn btn-primary">{{ 'mumble.edit'|trans }}</button>
-            </div>  
-        </fieldset> 
-    </form>       
-    <form action="{{ path('mumble_delete', { 'id': entity.id }) }}" method="post" id="form-delete">
-        {{ form_widget(delete_form) }}
+        <form action="{{ path('mumble_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            <fieldset id="validation"> 
+                {{ form_widget(edit_form) }}
 
-        <button type="submit"  class="btn btn-danger">{{ 'steam.del'|trans }}</button>
-    </form>   
+                <div class="form-actions">
+                    <button type="submit"  class="btn btn-primary">{{ 'mumble.edit'|trans }}</button>
+                </div>  
+            </fieldset> 
+        </form>       
+        <form action="{{ path('mumble_delete', { 'id': entity.id }) }}" method="post" id="form-delete">
+            {{ form_widget(delete_form) }}
+
+            <button type="submit"  class="btn btn-danger">{{ 'mumble.del'|trans }}</button>
+        </form>   
 
 {% endblock %}

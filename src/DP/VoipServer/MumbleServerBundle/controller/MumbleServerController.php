@@ -93,7 +93,7 @@ class MumbleServerController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
-
+                      
             return $this->redirect($this->generateUrl('mumble_show', array('id' => $entity->getId())));
         }
 
@@ -142,13 +142,21 @@ class MumbleServerController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createForm(new MumbleServerType(), $entity);
+        $editForm = $this->createForm(new BaseMumbleServerType(), $entity);
         $editForm->bind($request);
 
         if ($editForm->isValid()) {
+            
+            $twig = $this->get('twig');
+            
             $em->persist($entity);
             $em->flush();
 
+            $entity->uploadIniScript($twig); 
+            if($entity->getStateStatus() != 0){
+                $entity->changeStateServer('restart');
+            }   
+            
             return $this->redirect($this->generateUrl('mumble_edit', array('id' => $id)));
         }
 
@@ -186,7 +194,7 @@ class MumbleServerController extends Controller
                 }
             }
             else {
-                $entity->uploadShellScript($twig);
+                $entity->uploadShellScripts($twig);
                 $status = $entity->verificationServer();
             }
         }
@@ -210,7 +218,12 @@ class MumbleServerController extends Controller
             throw $this->createNotFoundException('Unable to find MumbleServer entity.');
         }
         
-        $entity->changeStateServer($state);
+        $status = $entity->changeStateServer($state);
+        $entity->setStateStatus($status);
+        
+        $em->persist($entity);
+        $em->flush();
+        
         
         return $this->redirect($this->generateUrl('mumble'));
     }

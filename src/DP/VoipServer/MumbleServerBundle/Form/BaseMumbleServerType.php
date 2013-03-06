@@ -35,12 +35,11 @@ class BaseMumbleServerType extends AbstractType
                     'label' => 'mumble.portIce'))
             ->add('iceSecret', 'text', array( 
                     'label' => 'mumble.iceSecret'))   
-            ->add('dir', 'text', array( 
-                    'label' => 'mumble.dir'))
             ->add('serverName', 'text', array( 
                     'label' => 'mumble.serverName'))
             ->add('serverPassword', 'text', array( 
-                    'label' => 'mumble.serverPassword'))
+                    'label' => 'mumble.serverPassword',
+                    'required' => false))
             ->add('portMumble', 'integer', array( 
                     'label' => 'mumble.portMumble'))
             ->add('maxUser', 'integer', array( 
@@ -49,8 +48,9 @@ class BaseMumbleServerType extends AbstractType
                     'label' => 'mumble.logName'))
             ->add('logDuration', 'integer', array( 
                     'label' => 'mumble.logDuration'))
-            ->add('welcomeText', 'text', array( 
-                    'label' => 'mumble.welcomeText'))
+            ->add('welcomeText', 'textarea', array( 
+                    'label' => 'mumble.welcomeText',
+                    'required' => false))
             ->add('bandWidth', 'integer', array( 
                     'label' => 'mumble.bandWidth'))
         ;

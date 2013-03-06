@@ -29,12 +29,14 @@ class InstallMumbleServerType extends BaseMumbleServerType
         parent::buildForm($builder, $options);
         
         $builder
+            ->add('dir', 'text', array( 
+                  'label' => 'mumble.dir'))
             ->add('install', 'choice', array(
-                                      'choices'   => array(0 => 'mumble.yes', 1 => 'mumble.no'), 
-                                      'label'     => 'mumble.install', 
-                                      'mapped'    => false, 
-                                      'expanded'  => true 
-                                      ))
+                  'choices'   => array(0 => 'mumble.yes', 1 => 'mumble.no'), 
+                  'label'     => 'mumble.install', 
+                  'mapped'    => false, 
+                  'expanded'  => true 
+                  ))
         ;
     }
 

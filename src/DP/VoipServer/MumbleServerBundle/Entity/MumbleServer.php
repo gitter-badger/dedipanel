@@ -37,7 +37,7 @@ class MumbleServer extends VoipServer {
      *
      * @ORM\Column(name="portIce", type="integer")
      * @Assert\Min(limit=1, message="voipserver.assert.port")
-     * @Assert\Max(limit=999, message="voipserver.assert.port")
+     * @Assert\Max(limit=65536, message="voipserver.assert.port")
      */
     private $portIce = 6502;
     /**
@@ -351,7 +351,7 @@ class MumbleServer extends VoipServer {
 
         // on définie les commandes shell
         $scriptPath = $installPath . 'mumble_install.sh';
-        $mkdirCmd = 'if [ -e  ' . $installPath . ' ]; then ';
+        $mkdirCmd  = 'if [ -e  ' . $installPath . ' ]; then ';
         $mkdirCmd .= 'rm -rf  ' . $installPath . '; ';
         $mkdirCmd .= 'else mkdir ' . $installPath . '; fi;';
 
@@ -381,12 +381,14 @@ class MumbleServer extends VoipServer {
         // on définie les variables principales
         $installPath = $this->getAbsoluteDir();
         $logPath = $installPath . 'install.log';
-        $logCmd = 'if [ -f ' . $logPath . ' ]; then cat ' . $logPath . '; else echo "File not found exception."; fi; ';
-
+        $logCmd  = 'if [ -f ' . $logPath . ' ]; then '; 
+        $logCmd .= 'cat ' . $logPath . '; '; 
+        $logCmd .= 'else echo "File not found exception."; fi;';
+        
         // on verifie que le log est présent et que l'install est bien fini :D
         $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
         $installLog = $sec->exec($logCmd);
-
+        
         if ($installLog != 'File not found exception.') {
             if (strpos($installLog, 'Shell upload ended') !== false) {
                 return 2;
@@ -415,16 +417,15 @@ class MumbleServer extends VoipServer {
     }
     public function uploadShellScripts(\Twig_Environment $twig) 
     {         
-        $scriptStatePath = $this->getAbsoluteStateScriptPath();
-        $scriptIniPath = $this->getAbsoluteIniScriptPath();
+        $scriptStatePath = $this->getAbsoluteStatePath();
         $installPath = $this->getAbsoluteDir();
         $log = $installPath . 'install.log';
         
         // Upload du script du script start/stop/restart
-        $this->uploadStateScript($twig, $installPath, $scriptStatePath);
+        $this->uploadStateScript($twig);
 
         // Upload du script du mumbl.ini modifier poru le panel
-         $this->uploadIniScript($twig, $installPath, $scriptIniPath);
+         $this->uploadIniScript($twig);
 
         // on définie les commandes shell
         $shelldExist = 'if [ -f ' . $scriptStatePath . ' ]; then ';
@@ -437,43 +438,49 @@ class MumbleServer extends VoipServer {
     /*
      *  Uplod Shell script to change state of mumble and change the configuration
      */
-    public function uploadStateScript(\Twig_Environment $twig, $scriptPath, $installPath) 
-    {
-        $screenName = $this->getDir();
+    public function uploadStateScript(\Twig_Environment $twig) 
+    {       
+        $installPath = $this->getAbsoluteDir();
+        $scriptPath = $this->getAbsoluteStatePath();
         
+        // On regarde si le mumble.sh existe, si c'est le cas on le supprime
+        $shelldExist  = 'if [ -e ' . $scriptPath . ' ]; then rm -f  ' . $scriptPath . '; fi';
+                
         $mumbleScript = $twig->render(
             'DPMumbleServerBundle:sh:mumble.sh.twig', array(
-            'ip' => $screenName,
-            'portIce' => $this->portIce,
-            'icesecret' => $this->icesecret,
-            'logName' => $this->logName,
-            'binDir' => $this->binDir,
-            'welcomeText' => $this->welcomeText,
-            'portMumble' => $this->portMumble,
-            'bandWidth' => $this->bandWidth,
-            'user' => $this->maxUser,
-            'logDuration' => $this->logDuration,
-            'serverName' => $this->serverName,
-            'serverPassword' => $this->serverPassword,
-                ));
-
+            'binDir' => $installPath
+            ));
+        
         $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
+        $sec->exec($shelldExist);
         $sec->upload($scriptPath, $mumbleScript, 0750);
     }
     /*
      *  Uplod Shell script to start mumble or stop it
      */
-    public function uploadIniScript(\Twig_Environment $twig, $scriptPath, $installPath) 
+    public function uploadIniScript(\Twig_Environment $twig) 
     {
+        $installPath = $this->getAbsoluteDir();
+        $scriptPath = $installPath . 'murmur.ini';
+        
         // On regarde si le mumble.ini existe, si c'est le cas on le supprime pour mettre le notre
-        $shelldExist  = 'if [ -f ' . $scriptPath . ' ]; then ';
-        $shelldExist .= 'rm -rf  ' . $scriptPath . '; ';
+        $shelldExist  = 'if [ -e ' . $scriptPath . ' ]; then rm -f  ' . $scriptPath . '; fi';
 
         $mumbleScript = $twig->render(
-            'DPMumbleServerBundle:sh:mumble.ini.twig', array(
-            'screenName' => $screenName,
-            'binDir' => $installPath
-                ));
+            'DPMumbleServerBundle:sh:murmur.ini.twig', array(
+            'ip' => $this->getMachine()->getPrivateIp(),
+            'portIce' => $this->getPortIce(),
+            'iceSecret' => $this->geticesecret(),
+            'binDir' => $installPath,
+            'welcomeText' => $this->getWelcomeText(),
+            'portMumble' => $this->getPortMumble(),
+            'bandWidth' => $this->getBandWidth(),
+            'maxUser' => $this->getMaxUser(),
+            'logName' => $this->getLogName(),
+            'logDuration' => $this->getLogDuration(),
+            'serverName' => $this->getServerName(),
+            'serverPassword' => $this->getServerPassword(),
+            ));
 
         $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
         $sec->exec($shelldExist);
@@ -485,17 +492,24 @@ class MumbleServer extends VoipServer {
      */
     public function changeStateServer($state) 
     {
-        return PHPSeclibWrapper::getFromMachineEntity($this->getMachine())
-                        ->exec($this->getAbsoluteScriptPath() . ' ' . $state);
+        $sec = PHPSeclibWrapper::getFromMachineEntity($this->getMachine());
+        $status = $sec->exec($this->getAbsoluteStatePath() . ' ' . $state);
+        if ($status == 'serveur start') {
+            return 1;
+        } elseif ($status == 'Serveur already started') {
+            return 1;
+        } elseif ($status == 'serveur stop') {
+            return 0;
+        } elseif ($status == 'Serveur already stoped') {
+            return 0;
+        }
     }
-
-    public function getAbsoluteStateScriptPath() 
+    public function getAbsoluteDir()
+    {
+        return $this->getMachine()->getHome() . '/' . $this->getDir() . '/';
+    }
+    public function getAbsoluteStatePath() 
     {
         return $this->getAbsoluteDir() . 'mumble.sh';
     }
-    public function getAbsoluteIniScriptPath() 
-    {
-        return $this->getAbsoluteDir() . 'mumble.pid';
-    }
-
 }

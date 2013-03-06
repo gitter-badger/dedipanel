@@ -73,22 +73,22 @@
                             
                          <div class="span4">
                             <div class="infos">
-                                <div class="actions clearfix">                        
-                                    <a href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'stop' }) }} ">
-                                        <span class="icon" data-icon="&#x24;" title="{{ 'game.stop'|trans }}"></span>
-                                    </a>
-                                    <a  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'restart' }) }}">
-                                        <span class="icon" data-icon="&#x27;" title="{{ 'game.restart'|trans }}"></span>
-                                    </a>
-
-                                    <a  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'start' }) }}">
-                                        <span class="icon" data-icon="&#x22;" title="{{ 'game.start'|trans }}"></span>
-                                    </a>
-
-                                    <a href="{{ path('mumble_show', {id: entity.id}) }}" class="slide">
-                                        <span class="icon" data-icon="&#x21;" title="{{ 'mumble.show'|trans }}"></span>
-                                    </a>
-
+                                <div class="actions clearfix">   
+                                    {% if entity.getStateStatus == '1' %}
+                                        <a href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'stop' }) }} ">
+                                            <span class="icon" data-icon="&#x24;" title="{{ 'game.stop'|trans }}"></span>
+                                        </a>
+                                        <a  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'restart' }) }}">
+                                            <span class="icon" data-icon="&#x27;" title="{{ 'game.restart'|trans }}"></span>
+                                        </a>
+                                    {% elseif entity.getStateStatus == '0' %}
+                                        <a  href="{{ path('mumble_changeState', { 'id': entity.id, 'state': 'start' }) }}">
+                                            <span class="icon" data-icon="&#x22;" title="{{ 'game.start'|trans }}"></span>
+                                        </a>
+                                    {% endif %}
+                                        <a href="{{ path('mumble_show', {id: entity.id}) }}" class="slide">
+                                            <span class="icon" data-icon="&#x21;" title="{{ 'mumble.show'|trans }}"></span>
+                                        </a>
                                 </div>
                             </div> 
                         </div>
