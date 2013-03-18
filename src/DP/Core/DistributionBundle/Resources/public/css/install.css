@@ -16,11 +16,11 @@
 
 @charset "UTF-8";
 
-html, body	{
+html, body  {
     height: 100%;
 }
 
-body	{
+body    {
     background: #fff;
     color: #393939;
     font-family: Arial;
@@ -38,9 +38,9 @@ body	{
 header {
     background-color: #2d2d2d;
     border-bottom: 1px solid rgb(167, 167, 167);
-    padding: 20px 0;
+    padding-bottom: 135px;
     height: 170px
-        -webkit-box-shadow: 1px 3px rgba(0, 0, 0, .25),inset 0 -1px 0 rgba(0, 0, 0, .1);
+    -webkit-box-shadow: 1px 3px rgba(0, 0, 0, .25),inset 0 -1px 0 rgba(0, 0, 0, .1);
     -moz-box-shadow: 0 1px 3px rgba(0,0,0,.25),inset 0 -1px 0 rgba(0,0,0,.1);
     box-shadow: 0 1px 3px rgba(0, 0, 0, .25),inset 0 -1px 0 rgba(0, 0, 0, .1);
 
@@ -50,7 +50,7 @@ header {
     background-repeat:no-repeat;
     width:290px;
     height:80px;
-    margin: 25px 0 0px 50px;	
+    margin: 25px 0 0px 50px;    
     float: left;
 }
 legend{
@@ -69,12 +69,12 @@ legend{
     border-top: 1px solid #8A8A8A;
 }
 #page-content {   
-    min-height: 400px;
+    /*min-height: 400px;*/
     background-color: FFFFF;
     margin: 20px;
 }
 #page-content {
-    /*	min-height: 500px;*/
+    /*  min-height: 500px;*/
     padding: 9px 0 8px 0;
 }
 /*** Etapes ***/
@@ -149,11 +149,10 @@ footer {
 }
 
 footer p {
-    height: 13px;
     text-align: center;
     color: #818181;
     font-size: 11px;
-    margin-top: 2px;
+    margin: 0;
 }
 
 /* =============================================================== */
@@ -166,11 +165,11 @@ a:hover {
     color: black;
     text-decoration: none !important;
 }
-label {	
+label { 
     font-family: 'Yanone Kaffeesatz', arial, sans-serif;
     font-size: 16px;
     color: #666; 
-    width: 250px;
+    width: 275px;
     display: block;
     float: left;
 }

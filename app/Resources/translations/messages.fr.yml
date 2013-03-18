@@ -23,6 +23,7 @@ menu.home: Accueil
 menu.machine: Gestion des machines
 menu.steam: Serveurs Steam
 menu.minecraft: Serveurs Minecraft
+menu.mumble: Serveurs Mumble
 menu.admin: Administration
 
 admin.group.user: Utilisateurs
