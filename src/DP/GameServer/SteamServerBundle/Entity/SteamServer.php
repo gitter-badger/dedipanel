@@ -178,7 +178,7 @@ class SteamServer extends GameServer {
         $installDir = $this->getAbsoluteDir();
         $scriptPath = $installDir . 'install.sh';
         $logPath = $installDir . 'install.log';
-        $screenName = $this->getDir();
+        $screenName = $this->getScreenName();
         $installName = $this->game->getInstallName();
 
         $mkdirCmd = 'if [ ! -e ' . $installDir . ' ]; then mkdir ' . $installDir . '; fi';
