@@ -50,8 +50,12 @@
 }
 
 a {
+<<<<<<< HEAD
     color: #818181;
     text-decoration: none;
+=======
+	text-decoration: none;
+>>>>>>> origin/master
 }
 a:hover {
     color: black;
@@ -339,4 +343,9 @@ input[type="checkbox"] + label > .symfony-form-required/*,
 .template-server-cfg {
     width: 350px;
     height: 250px;
+}
+
+form ul[id*="roles"].unstyled li label {
+    width: auto;
+    float: none;
 }

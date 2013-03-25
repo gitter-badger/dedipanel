@@ -23,7 +23,10 @@ menu.home: Dashboard
 menu.machine: Machines Management
 menu.steam: Steam Servers
 menu.minecraft: Minecraft Servers
+<<<<<<< HEAD
 menu.mumble: Mumble Servers
+=======
+>>>>>>> origin/master
 menu.admin: Administration
 
 admin.group.game: Game & Plugins
