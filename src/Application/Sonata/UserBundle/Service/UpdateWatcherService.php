@@ -43,11 +43,7 @@ class UpdateWatcherService
         if (strlen($version) > 0) {
             $version = json_decode($version);
             $this->versionAvailable = $version->version;
-<<<<<<< HEAD
-                        
-=======
-            
->>>>>>> origin/master
+
             if (version_compare($this->versionAvailable, $this->currentVersion) == 1) {
                 $this->updateAvailable = true;
             }

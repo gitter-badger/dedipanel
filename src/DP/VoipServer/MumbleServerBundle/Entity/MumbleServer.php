@@ -5,7 +5,9 @@ namespace DP\VoipServer\MumbleServerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use DP\VoipServer\VoipServerBundle\Entity\VoipServer;
 use DP\Core\MachineBundle\PHPSeclibWrapper\PHPSeclibWrapper;
+use DP\VoipServer\VoipServerBundle\services\iceInitClass;
 use Symfony\Component\Validator\Constraints as Assert;
+use DP\VoipServer\MumbleServerBundle\Ice\IceServerClass;
 
 /**
  * DP\MumbleServer\umbleServerBundle\Entity\MumbleServer
@@ -89,6 +91,11 @@ class MumbleServer extends VoipServer {
      * @Assert\Max(limit=100000, message="voipserver.assert.port")
      */
     private $bandWidth = 100000;
+	
+	/**
+	 * @var IceServerClass $query
+	 */
+	private $query;
 
     /**
      * Set serverName
@@ -512,4 +519,28 @@ class MumbleServer extends VoipServer {
     {
         return $this->getAbsoluteDir() . 'mumble.sh';
     }
+
+	/**
+	 * Sets associated IceServer instance associated to the current MumbleServer
+	 *
+	 * @param IceServerClass $query Ice Server instance associated to the current Mumble Server
+	 * 
+	 * @return MumbleServer Current MumbleServer instance, for method chaining
+	 */	
+	public function setQuery(IceServerClass $query)
+	{
+		$this->query = $query;
+		
+		return $this;
+	}
+	
+	/**
+	 * Gets the current associated IceServer instance
+	 *
+	 * @return IceServerClass Ice Server instance associated to the current Mumble Server
+	 */
+	public function getQuery()
+	{
+		return $this->query;
+	}
 }

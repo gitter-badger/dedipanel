@@ -146,13 +146,10 @@ class PHPSeclibWrapper {
             }
             else {
                 throw new Exception\IncompleteLoginIDException($this);
-<<<<<<< HEAD
-=======
             }
             
             if ($login === false) {
                 throw new Exception\ConnectionErrorException($this);
->>>>>>> origin/master
             }
             
             $this->ssh = $ssh;
@@ -178,13 +175,10 @@ class PHPSeclibWrapper {
             }
             else {
                 throw new Exception\IncompleteLoginIDException($this);
-<<<<<<< HEAD
-=======
             }
             
             if ($login === false) {
                 throw new Exception\ConnectionErrorException($this);
->>>>>>> origin/master
             }
             
             $this->sftp = $sftp;

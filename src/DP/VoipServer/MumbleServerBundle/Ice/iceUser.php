@@ -18,37 +18,48 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-class User {
+class iceUser extends iceServer{
 
     private $container = array();
     private $containerUser = array();
     private $filter;
-
+    private $ice;
+    private $id;
+	private $user;
+    
     /**
      * 
      * @return type
      */
-    public function __construct($filter = Null) {
+    public function __construct($ice, $id, $user, $filter = Null) {
 
         /**
-         * Recuperation de tout les utilisateurs 
-         * sauf si $filter is not null
+         * Recuperation de l'user ou des users
+         * sauf si $filter n'est pas null
+		 * on execute l'action pour l'user
          */
-        $this->user = $this->getRegisteredUsers($filter);
-
         if (is_null($filter)) {
-
-            $this->users = count($this->user);
+            	$this->users = count($this->user);
             if ($this->users > 0) {
+            	$this->users = $getRegistered->getRegisteredUsers($filter);
+					
                 for ($i = 0; $i < $this->users; $i++) {
-                    $this->getUser($this->user[$i]);
-                    $this->container[$this->user[$i]] = $this->containerUser;
+                    $this->containerUser = $this->getUser($this->user[$i]);
+                    $this->container[$this->users[$i]] = $this->containerUser;
                 }
             }
+			else {
+				$this->container = $this->getUser($user);
+			} 
+			
             return $this->container;
         }
-        else
-            return $this->container[$this->getUser($this->user)];
+		elseif($filter == 1) {
+	        return $this->setRegistration($user);
+		}		
+		elseif($filter == 2) {
+	        return $this->unregisterUser($user);
+		}                                                     
     }
 
     /**
@@ -57,7 +68,10 @@ class User {
      * @return type
      */
     public function getUser($user) {
-        $this->user = $user;
+    				
+		$server = $ice->getServer(intval($this->id));
+        $this->user = $this->server->$user;
+
 
         $this->containerUser = array(
             'session' => $this->getSession(),
@@ -178,9 +192,9 @@ class User {
      * 
      * @return type
      */
-    public function getRegistration() {
+    public function setRegistration($user) {
         $this->id = $this->server->registerUser(array('NEWUSER'));
-        return $this->server->updateRegistration($this->id, array('DP Membre' . $this->id));
+        $this->server->updateRegistration($this->id, array($user));
     }
 
     /**
@@ -188,8 +202,8 @@ class User {
      * @param type $id
      * @return type
      */
-    public function unregisterUser($id) {
-        return $this->server->unregisterUser($id);
+    public function setUnregisterUser($id) {
+        $this->server->unregisterUser($id);
     }
 
 }

@@ -20,8 +20,8 @@
 
 class Viewer extends Server {
     
-    
-
+	private $viewer;
+	
     public function viewer($sid) {
         $tree = $this->treeView($sid);
         $viewer = $this->channel($tree, $sid, 0, true, false);

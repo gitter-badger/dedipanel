@@ -18,17 +18,17 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-class Server {
+class iceServer {
 
-    private $meta;
     private $server;
 
     /**
      * 
      * @param type $meta
      */
-    public function __construct($server) {
-        $this->server = $server;
+    public function __construct($ice ,$id) {
+   		$this->ice = $ice;
+        $this->server = $this->getServer($id);
     }
 
     /**

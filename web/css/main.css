@@ -50,12 +50,8 @@
 }
 
 a {
-<<<<<<< HEAD
     color: #818181;
     text-decoration: none;
-=======
-	text-decoration: none;
->>>>>>> origin/master
 }
 a:hover {
     color: black;
@@ -75,39 +71,37 @@ body {
     position: relative;
 }
 header ul {
-    list-style-type: none;
-    margin: 0;
-    float: right;
-    margin: 0 30px 0 0;
-    border-right: 1px solid #474747;
+	list-style-type: none;
+	margin: 0;
+	float: right;
+	margin: 0 30px 0 0;
+	border-right: 1px solid rgb(71, 68, 68);
+	border-left: 1px solid rgb(0, 0, 0);
 }
 header li {
-    float: left;
-    margin: 0 0px 0 0;
-    height: 31px;
-    line-height: 31px;
-    border-left: 1px solid rgb(77, 77, 77);
-    border-right: 1px solid rgb(0, 0, 0);
+	float: left;
+	height: 31px;
+	line-height: 31px;
+	border-left: 1px solid rgb(68, 68, 68);
+	border-right: 1px solid rgb(22, 22, 22);
 }
 header li:last-of-type {
-    /*margin: 0 3px 0 0;*/
-    margin: 0;
+	margin: 0;
 }
 header li a {
-    color: #C2C2C2;
-    background-color: rgb(34, 34, 34);
-    padding: 0 15px 0 15px;
-    display: block;
+	color: #C2C2C2; 
+	background-color: rgb(39, 39, 39);
+	padding: 0 15px 0 15px;
+	display: block;
     -webkit-transition: color 0.4s ease-out;
     -moz-transition: color 0.4s ease-out;
     -o-transition: color 0.4s ease-out;
     transition: color 0.4s ease-out;
 }
 header li a:hover {
-    background-color: #1B1B1B;
-    color: white;
-    text-decoration: none;
-
+	background-color: rgb(29, 29, 29);
+	color: #4cb0ff;
+	text-decoration: none;
     -webkit-transition: color 0.2s ease-out;
     -moz-transition: color 0.2s ease-out;
     -o-transition: color 0.2s ease-out;

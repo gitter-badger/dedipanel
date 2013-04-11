@@ -24,7 +24,16 @@ class MumbleServerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('DPVoipServerBundle:VoipServer')->findAll();
-          
+        
+		$entity = $entities[0];
+		$query = TaClass($entity);
+		var_dump($query->getUsers());
+		// Ca fonctionne aussi bien ^^
+		// fais le service après
+		// et le listener en dernier
+		// (quand t'arrivers à récupérer une instance via le service dans le controller en gros)
+		//var_dump($entity->getQuery());
+		
         return $this->render('DPMumbleServerBundle:MumbleServer:index.html.twig', array(
             'entities' => $entities,
         ));
