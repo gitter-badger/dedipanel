@@ -15,6 +15,10 @@ class MachineType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('machine', 'entity', array(
+                  'label' => 'game.selectMachine', 
+                  'class' => 'DPMachineBundle:Machine'
+                  ))
             ->add('icePort')
             ->add('iceSecret')
             ->add('query')
