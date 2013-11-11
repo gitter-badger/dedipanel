@@ -34,26 +34,33 @@ class Ice {
      * @param type $port
      * @param type $icesecret
      */
-    public function __construct(\iceConnection $ice) {  	
-		$this->ice = $ice;
-    }
-    /**
-     * 
-     */
-    public function userState() {
+    public function __construct() {  	
+		
     }	
     /**
      * 
+     * @return \DP\VoipServer\MumbleServerbundle\Ice\virtualUser 
      */
-    public function userState($ice, $user, $filter) {
-    	return iceUser($ice, $id, $user, $filter)
-		
+    public function setUser($name) {
+    	$users = virtualUser::getUsers();
+		  return $users;
     }
-	/**
-	 * 
-	 */     
-	 public function __destruct() {
-     	$this->$ice->disconnect;
-     }
+    /**
+     * 
+     * @return \DP\VoipServer\MumbleServerbundle\Ice\virtualUser 
+     */
+    public function getUser($id) {
+    	$users = virtualUser::getUsers($filter);
+		  return $users;
+    }
+    /**
+     * 
+     * @return \DP\VoipServer\MumbleServerbundle\Ice\virtualUser 
+     */
+    public function setDUser($name) {
+    	$users = virtualUser::newUser($name);
+		  return $user;
+    }
+
 
 }

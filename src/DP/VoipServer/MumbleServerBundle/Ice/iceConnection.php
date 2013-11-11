@@ -33,59 +33,58 @@ class iceConnection {
      * @param type $ip
      * @param type $port
      * @param type $icesecret
-	 * @global Ice_InitializationData $ICE
+	   * @global Ice_InitializationData $ICE
      */
     public function __construct($ip, $port, $icesecret = Null) {
-        if (!extension_loaded('ice')) {
-            trigger_error('IcePHP ne semble pas être installé sur votre serveur', E_USER_ERROR);
-        } else {
-
-
-            $this->endpoint = 'Meta:tcp -h ' . $this->ip . ' -p ' . $this->port . ' -t 2000';
-
-            /**
-			 * 
-			 * On test la version de ice pour savoir si c'est bien la 3.3
-             * @ Ice =< v3.3
-			 * 
-             */
-            if (!function_exists('Ice_intVersion') || Ice_intVersion() < 30400) {
-
-                Ice_loadProfile();
-                global $ICE;
-
-                $base = $ICE->stringToProxy($this->endpoint);
-
-                try {
-                    $this->meta = $base->ice_checkedCast('::Murmur::Meta')->ice_context($this->icesecret);
-                    $this->connected = true;
-					return $this->meta;
-                } catch (Ice_ConnectionRefusedException $exc) {
-                    trigger_error($this->getLastError(), E_USER_WARNING);
-                }
-            }
-            /**
-			 * 
-			 * On test la version de ice pour savoir si c'est bien la 3.4 
-             * @ Ice >= v3.4
-			 * 
-             */ 
-             
-             else {
-
-                $base = new Ice_InitializationData;
-                $base->properties = Ice_createProperties();
-                $base->properties->setProperty('Ice.ImplicitContext', $this->icesecret);
-
-                try {
-                    $this->meta = Murmur_MetaPrxHelper::checkedCast($base->stringToProxy($this->endpoint));
-                    $this->connected = true;
-					return $this->meta;
-                } catch (Ice_ConnectionRefusedException $exc) {
-                    trigger_error($this->getLastError(), E_USER_WARNING);
-                }
-            }
-        }
+      $this->ip = $ip;
+      $this->port = $port;
+      $this->context = $icesecret;
+    }
+    
+    
+    public function getConnection(){
+    
+      if (!extension_loaded('ice')) {
+        echo 'IcePHP ne semble pas être installé sur votre serveur';
+      }
+      else {
+          set_include_path(get_include_path() . PATH_SEPARATOR . '/usr/share/php5/');
+          require_once 'Ice.php';
+          require_once 'Murmur.php';
+      
+          $endpoint = 'Meta:tcp -h ' . ICE_IP . ' -p ' . ICE_PORT . ' -t 2000';
+      
+          // Ice < 3.4
+          if (!function_exists('Ice_intVersion') || Ice_intVersion() < 30400) {
+              Ice_loadProfile();
+              global $ICE;
+      
+              $base = $ICE->stringToProxy($endpoint);
+      
+              try {
+                  $meta = $base->ice_checkedCast('::Murmur::Meta')->ice_context(ICE_SECRET);
+                  
+                  echo 'Connecté (< v3.4)';
+              } catch (Ice_ConnectionRefusedException $exc) {
+                  echo 'Non connecté (< v3.4)';
+              }
+          }
+          // Ice >= 3.4
+          else {
+              $base = new Ice_InitializationData;
+              $base->properties = Ice_createProperties();
+              $base->properties->setProperty('Ice.ImplicitContext', ICE_SECRET);
+      
+              try {
+                  $communicator = Ice_initialize($base);
+                  $meta = Murmur_MetaPrxHelper::checkedCast($communicator->stringToProxy($endpoint));
+                  
+                  echo 'Connecté (>= 3.4)';
+              } catch (Ice_ConnectionRefusedException $exc) {
+                  echo 'Non connecté (>= 3.4)';
+              }
+          }
+      }
     }
 
     /**
