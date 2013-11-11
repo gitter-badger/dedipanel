@@ -51,19 +51,6 @@ class VoipServer {
     protected $machine;
 
     /**
-     * @var integer $installationStatus
-     *
-     * @ORM\Column(name="installationStatus", type="integer", nullable=true)
-     */
-    protected $installationStatus;
-    /**
-     * @var integer $stateStatus
-     *
-     * @ORM\Column(name="stateStatus", type="integer", nullable=false)
-     */
-    protected $stateStatus = 0;
-
-    /**
      * Get id
      *
      * @return integer 
@@ -71,29 +58,6 @@ class VoipServer {
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set installationStatus
-     *
-     * @param integer $installationStatus
-     * @return VoipServer
-     */
-    public function setInstallationStatus($installationStatus)
-    {
-        $this->installationStatus = $installationStatus;
-    
-        return $this;
-    }
-
-    /**
-     * Get installationStatus
-     *
-     * @return integer 
-     */
-    public function getInstallationStatus()
-    {
-        return $this->installationStatus;
     }
 
     /**
@@ -117,28 +81,5 @@ class VoipServer {
     public function getMachine()
     {
         return $this->machine;
-    }
-
-    /**
-     * Set stateStatus
-     *
-     * @param integer $stateStatus
-     * @return VoipServer
-     */
-    public function setStateStatus($stateStatus)
-    {
-        $this->stateStatus = $stateStatus;
-    
-        return $this;
-    }
-
-    /**
-     * Get stateStatus
-     *
-     * @return integer 
-     */
-    public function getStateStatus()
-    {
-        return $this->stateStatus;
     }
 }
