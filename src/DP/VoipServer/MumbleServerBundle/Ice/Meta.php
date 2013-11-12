@@ -23,7 +23,7 @@ namespace DP\VoipServer\MumbleServerBundle\Ice\Meta;
 use DP\VoipServer\MumbleServerBundle\Ice\VirtualServer\virtualServer;
 use DP\VoipServer\MumbleServerBundle\Ice\VirtualServer\virtualUser;
 use DP\VoipServer\MumbleServerBundle\Ice\VirtualServer\virtualAction;
-use DP\VoipServer\MumbleServerBundle\Ice\iceConnection;
+use DP\VoipServer\MumbleServerBundle\Ice\Ice;
 
 class Meta { 
 

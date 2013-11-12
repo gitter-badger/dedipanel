@@ -1,0 +1,52 @@
+# Copyright (C) 2010-2012 Kerouanton Albin, Smedts Jérôme
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+
+mumble:
+    pattern:  /
+    defaults: { _controller: "DPMumbleServerBundle:Mumble:index" }
+
+mumble_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "DPMumbleServerBundle:Mumble:show" }
+
+mumble_new:
+    pattern:  /new
+    defaults: { _controller: "DPMumbleServerBundle:Mumble:new" }
+
+mumble_create:
+    pattern:  /create
+    defaults: { _controller: "DPMumbleServerBundle:Mumble:create" }
+    requirements: { _method: post }
+
+mumble_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "DPSteamServerBundle:SteamServer:edit" }
+
+mumble_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "DPSteamServerBundle:SteamServer:update" }
+    requirements: { _method: post }
+
+mumble_delete:
+    pattern:  /{id}/delete/
+    defaults: { _controller: "DPSteamServerBundle:SteamServer:delete", fromMachine: false }
+    requirements: { _method: post }
+
+mumble_changeState:
+    pattern:  /{id}/{state}
+    defaults: { _controller: "DPSteamServerBundle:SteamServer:changeState" }
+    requirements: { state: "start|stop|restart" }

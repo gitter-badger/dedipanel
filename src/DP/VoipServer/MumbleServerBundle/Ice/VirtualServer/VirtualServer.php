@@ -18,9 +18,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-namespace DP\VoipServer\MumbleServerBundle\Ice\virtualServer;
+namespace DP\VoipServer\MumbleServerBundle\Ice\VirtualServer;
 
-class virtualServer extends Meta {
+class VirtualServer extends Meta {
       
   private $_server
     
@@ -67,7 +67,7 @@ class virtualServer extends Meta {
         break;    
         }
      }
-   	    /**
+	  /**
      * 
      * @return type
      */
@@ -135,5 +135,66 @@ class virtualServer extends Meta {
     public function getLog() {
         return $this->_server->getLog(0, 240);
     }
+        /**
+     * 
+     * @return type
+     */
+    function setBan() {
 
+        if (!is_int($this->user->address)) {
+            $ip_explode = explode(".", $this->user->address);
+            $this->user->address = $ip_explode[0] * 256 * 256 * 256 + $ip_explode[1] * 256 * 256 + $ip_explode[2] * 256 + $ip_explode[3];
+        }
+
+        $ban = new Murmur_Ban();
+        $ban->name = $this->user->name;
+        $ban->address = $this->user->address;
+        $ban->bits = $this->bits;
+        $ban->reason = $this->raison;
+        $ban->duration = 1;
+        $ban->start = 1;
+
+        $bannir[] = $ban;
+
+        $this->server->setBans($bannir);
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    function setUnBan($session) {
+
+        new user($session);
+        $banni = $this->server->getBans();
+
+        unset($banni[$this->user->id]);
+        $this->server->setBans($banni);
+    }
+
+    /**
+     * 
+     * @param type $sessionId
+     * @param type $raison
+     * @return type
+     */
+    public function kickUser($session, $raison = '') {
+        return $this->server->kickUser($session, $raison);
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    public function removeChannel() {
+        return $this->server->removeChannel();
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    public function setChannel() {
+        return $this->server->addChannel();
+    }
 }

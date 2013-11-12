@@ -18,15 +18,13 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
  
- namespace DP\VoipServer\MumbleServerBundle\iceInitClass;
+ namespace DP\VoipServer\MumbleServerBundle\Ice\Ice;
 
-class iceConnection {
+class Ice {
 
     private $ip;
     private $port;
-    private $type;
     private $icesecret;
-    private $connected;
 
     /**
      * 
@@ -85,24 +83,6 @@ class iceConnection {
               }
           }
       }
-    }
-
-    /**
-     * 
-     * @param Ice_InitializationData $ICE
-     * @throws NotConnectedException
-     */
-    public function disconnect($ICE) {
-        if (!$this->connected) {
-            throw new NotConnectedException('Connection is already disconnected.');
-        }
-
-        $this->connected = false;
-        try {
-            $ICE->destroy();
-        } catch (Ice_LocalException $ex) {
-            trigger_error($this->getLastError(), E_USER_WARNING);
-        }
     }
 
     /**

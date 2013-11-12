@@ -16,9 +16,9 @@
   You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.,
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
+*/
  
- namespace DP\VoipServer\MumbleServerBundle\iceInitClass;
+namespace DP\VoipServer\MumbleServerBundle\Mumblefactory;
 
 class Ice {
 
@@ -27,40 +27,10 @@ class Ice {
     private $type;
     private $icesecret;
     private $connected;
+    protected $em;
 
-    /**
-     * 
-     * @param type $ip
-     * @param type $port
-     * @param type $icesecret
-     */
-    public function __construct() {  	
-		
-    }	
-    /**
-     * 
-     * @return \DP\VoipServer\MumbleServerbundle\Ice\virtualUser 
-     */
-    public function setUser($name) {
-    	$users = virtualUser::getUsers();
-		  return $users;
+    public function __construct($ip, $port, $icesecret)
+    {
+        $this->em = $entityManager;
     }
-    /**
-     * 
-     * @return \DP\VoipServer\MumbleServerbundle\Ice\virtualUser 
-     */
-    public function getUser($id) {
-    	$users = virtualUser::getUsers($filter);
-		  return $users;
-    }
-    /**
-     * 
-     * @return \DP\VoipServer\MumbleServerbundle\Ice\virtualUser 
-     */
-    public function setDUser($name) {
-    	$users = virtualUser::newUser($name);
-		  return $user;
-    }
-
-
 }
