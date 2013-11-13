@@ -1,10 +1,5 @@
-parameters:
-    mumble.factory.class:         DP\VoipServer\MumbleServerBundle\service\MumbleFactory
-#    mumble.virtualServer.class:   DP\VoipServer\MumbleServerBundle\Ice\VirtualServer\VirtualServer
-#    mumble.virtualUser.class:     DP\VoipServer\MumbleServerBundle\Ice\VirtualServer\VirtualUser
-#    mumble.ice.class:             DP\VoipServer\MumbleServerBundle\Ice\Ice
-#    mumble.meta.class:            DP\VoipServer\MumbleServerBundle\Ice\Meta
-
 services:
-  mumble.factory:
-    class:  "%mumble.factory.class%"
+    newsletter_manager:
+        class:          DP\VoipServer\MumbleServerBundle\Ice\Ice
+        factory_class:  DP\VoipServer\MumbleServerBundle\service\MumbleFactory
+        factory_method: getConnection

@@ -8,22 +8,21 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class MumbleType extends AbstractType
 {
-    
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'DP\VoipServer\MumbleServerBundle\Entity\Mumble'
-        ));
+        $builder
+            ->add('machine', 'entity', array(
+                    'label' => 'mumble.selectMachine',
+                    'class' => 'DPMachineBundle:Machine'))
+            ->add('portIce', 'integer', array(
+                    'label' => 'mumble.portIce'))
+            ->add('iceSecret', 'text', array(
+                    'label' => 'mumble.iceSecret'))
+        ;
     }
 
-    /**
-     * @return string
-     */
     public function getName()
     {
-        return 'dp_voipserver_mumbleserverbundle_mumble';
+        return 'dp_voipserver_mumbleserverbundle_mumbleservertype';
     }
 }

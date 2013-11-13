@@ -22,15 +22,10 @@ namespace DP\VoipServer\MumbleServerBundle\Mumblefactory;
 
 class Ice {
 
-    private $ip;
-    private $port;
-    private $type;
-    private $icesecret;
-    private $connected;
-    protected $em;
+    public function getConnect($ip, $port, $context) {
+    
+        $instance = new Ice();
 
-    public function __construct($ip, $port, $icesecret)
-    {
-        $this->em = $entityManager;
+        return $instance;
     }
 }

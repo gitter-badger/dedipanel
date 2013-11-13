@@ -14,39 +14,33 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-
-mumble:
+machine:
     pattern:  /
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:index" }
+    defaults: { _controller: "DPMumbleServerBundle:Machine:index" }
 
-mumble_show:
+machine_show:
     pattern:  /{id}/show
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:show" }
+    defaults: { _controller: "DPMumbleServerBundle:Machine:show" }
 
-mumble_new:
+machinemumble_new:
     pattern:  /new
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:new" }
+    defaults: { _controller: "DPMumbleServerBundle:Machine:new" }
 
-mumble_create:
+machine_mumble_create:
     pattern:  /create
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:create" }
+    defaults: { _controller: "DPMumbleServerBundle:Machine:create" }
     requirements: { _method: post }
 
-mumble_edit:
+machine_edit:
     pattern:  /{id}/edit
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:edit" }
+    defaults: { _controller: "DPMumbleServerBundle:Machine:edit" }
 
-mumble_update:
+machine_update:
     pattern:  /{id}/update
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:update" }
+    defaults: { _controller: "DPMumbleServerBundle:Machine:update" }
     requirements: { _method: post }
 
-mumble_delete:
-    pattern:  /{id}/delete/
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:delete" }
+machine_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "DPMumbleServerBundle:Machine:delete" }
     requirements: { _method: post }
-
-mumble_changeState:
-    pattern:  /{id}/{state}
-    defaults: { _controller: "DPMumbleServerBundle:Mumble:changeState" }
-    requirements: { state: "start|stop|restart" }

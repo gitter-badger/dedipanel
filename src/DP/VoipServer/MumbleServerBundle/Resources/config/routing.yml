@@ -16,5 +16,8 @@
 
 DPMumbleServerBundle_VS:
     resource: "@DPMumbleServerBundle/Resources/config/routing/virtualServer.yml"
-    prefix:   /mumble/
+    prefix: /
 
+DPMumbleServerBundle_VS:
+    resource: "@DPMumbleServerBundle/Resources/config/routing/virtualServer.yml"
+    prefix: /machine/
