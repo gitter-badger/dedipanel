@@ -1,5 +1,5 @@
 services:
-    newsletter_manager:
+    mumble.factory:
         class:          DP\VoipServer\MumbleServerBundle\Ice\Ice
         factory_class:  DP\VoipServer\MumbleServerBundle\service\MumbleFactory
         factory_method: getConnection

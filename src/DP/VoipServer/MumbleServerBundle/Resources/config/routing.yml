@@ -15,9 +15,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 DPMumbleServerBundle_VS:
-    resource: "@DPMumbleServerBundle/Resources/config/routing/virtualServer.yml"
+    resource: "@DPMumbleServerBundle/Resources/config/routing/mumble.yml"
     prefix: /
 
-DPMumbleServerBundle_VS:
-    resource: "@DPMumbleServerBundle/Resources/config/routing/virtualServer.yml"
+DPMumbleServerBundle_Machine:
+    resource: "@DPMumbleServerBundle/Resources/config/routing/machine.yml"
     prefix: /machine/

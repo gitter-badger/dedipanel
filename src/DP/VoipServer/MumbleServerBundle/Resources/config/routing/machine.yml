@@ -14,15 +14,15 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-machine:
+machine_mumble:
     pattern:  /
     defaults: { _controller: "DPMumbleServerBundle:Machine:index" }
 
-machine_show:
+machine_mumble_show:
     pattern:  /{id}/show
     defaults: { _controller: "DPMumbleServerBundle:Machine:show" }
 
-machinemumble_new:
+machine_mumble_new:
     pattern:  /new
     defaults: { _controller: "DPMumbleServerBundle:Machine:new" }
 
@@ -31,16 +31,16 @@ machine_mumble_create:
     defaults: { _controller: "DPMumbleServerBundle:Machine:create" }
     requirements: { _method: post }
 
-machine_edit:
+machine_mumble_edit:
     pattern:  /{id}/edit
     defaults: { _controller: "DPMumbleServerBundle:Machine:edit" }
 
-machine_update:
+machine_mumble_update:
     pattern:  /{id}/update
     defaults: { _controller: "DPMumbleServerBundle:Machine:update" }
     requirements: { _method: post }
 
-machine_delete:
+machine_mumble_delete:
     pattern:  /{id}/delete
     defaults: { _controller: "DPMumbleServerBundle:Machine:delete" }
     requirements: { _method: post }

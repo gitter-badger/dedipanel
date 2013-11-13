@@ -22,9 +22,9 @@ namespace DP\VoipServer\MumbleServerBundle\Mumblefactory;
 
 class Ice {
 
-    public function getConnect($ip, $port, $context) {
+    public function getConnect($ip, $port, $context = null) {
     
-        $instance = new Ice();
+        $instance = new Ice($ip, $port, $contex);
 
         return $instance;
     }

@@ -11,18 +11,18 @@ use DP\VoipServer\MumbleServerBundle\Entity\Mumble;
 use DP\VoipServer\MumbleServerBundle\Form\Mumble\MumbleType;
 
 /**
- * Mumble\Machine controller.
+ * Machine controller.
  *
- * @Route("/mumble_machine")
+ * @Route("/machine")
  */
 class MachineController extends Controller
 {
     /**
      * Lists all Mumble entities.
      *
-     * @Route("/", name="mumble")
+     * @Route("/", name="machine_mumble")
      * @Method("GET")
-     * @Template()
+     * @Template("DPMumbleServerBundle:Machine:index.html.twig")
      */
     public function indexAction()
     {
@@ -37,9 +37,9 @@ class MachineController extends Controller
     /**
      * Creates a new Mumble entity.
      *
-     * @Route("/", name="mumble_create")
+     * @Route("/", name="machine_mumble_create")
      * @Method("POST")
-     * @Template("DPMumbleServerBundle:Mumble:new.html.twig")
+     * @Template("DPMumbleServerBundle:Machine:new.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -52,7 +52,7 @@ class MachineController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('mumble_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('machine_mumble_show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -71,7 +71,7 @@ class MachineController extends Controller
     private function createCreateForm(Mumble $entity)
     {
         $form = $this->createForm(new MumbleType(), $entity, array(
-            'action' => $this->generateUrl('mumble_create'),
+            'action' => $this->generateUrl('machine_mumble_create'),
             'method' => 'POST',
         ));
 
@@ -83,7 +83,7 @@ class MachineController extends Controller
     /**
      * Displays a form to create a new Mumble entity.
      *
-     * @Route("/new", name="mumble_new")
+     * @Route("/new", name="machine_mumble_new")
      * @Method("GET")
      * @Template()
      */
@@ -101,7 +101,7 @@ class MachineController extends Controller
     /**
      * Finds and displays a Mumble entity.
      *
-     * @Route("/{id}", name="mumble_show")
+     * @Route("/{id}", name="machine_mumble_show")
      * @Method("GET")
      * @Template()
      */
@@ -126,7 +126,7 @@ class MachineController extends Controller
     /**
      * Displays a form to edit an existing Mumble entity.
      *
-     * @Route("/{id}/edit", name="mumble_edit")
+     * @Route("/{id}/edit", name="machine_mumble_edit")
      * @Method("GET")
      * @Template()
      */
@@ -160,7 +160,7 @@ class MachineController extends Controller
     private function createEditForm(Mumble $entity)
     {
         $form = $this->createForm(new MumbleType(), $entity, array(
-            'action' => $this->generateUrl('mumble_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('machine_mumble_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -171,9 +171,9 @@ class MachineController extends Controller
     /**
      * Edits an existing Mumble entity.
      *
-     * @Route("/{id}", name="mumble_update")
+     * @Route("/{id}", name="machine_mumble_update")
      * @Method("PUT")
-     * @Template("DPMumbleServerBundle:Mumble:edit.html.twig")
+     * @Template("DPMumbleServerBundle:Machine:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
@@ -192,7 +192,7 @@ class MachineController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('mumble_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('machine_mumble_edit', array('id' => $id)));
         }
 
         return array(
@@ -204,7 +204,7 @@ class MachineController extends Controller
     /**
      * Deletes a Mumble entity.
      *
-     * @Route("/{id}", name="mumble_delete")
+     * @Route("/{id}", name="machine_mumble_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -237,7 +237,7 @@ class MachineController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('mumble_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('machine_mumble_delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
