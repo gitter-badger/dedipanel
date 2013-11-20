@@ -4,16 +4,13 @@ namespace DP\VoipServer\MumbleServerBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use DP\VoipServer\MumbleServerBundle\Entity\Mumble;
 use DP\VoipServer\MumbleServerBundle\Form\MumbleType;
 
 /**
  * Mumble controller.
  *
- * @Route("/mumble")
  */
 class MumbleController extends Controller
 {
@@ -21,26 +18,20 @@ class MumbleController extends Controller
     /**
      * Lists all Mumble entities.
      *
-     * @Route("/", name="mumble")
-     * @Method("GET")
-     * @Template()
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+//        $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('DPMumbleServerBundle:Mumble')->findAll();
+       // $entities = $em->getRepository('DPMumbleServerBundle:Mumble')->findAll();
 
-        return array(
-            'entities' => $entities,
-        );
+        return $this->render('DPMumbleServerBundle:Mumble:index.html.twig', array(
+            //'entities' => $entities,
+        ));
     }
     /**
      * Creates a new Mumble entity.
      *
-     * @Route("/", name="mumble_create")
-     * @Method("POST")
-     * @Template("DPMumbleServerBundle:Mumble:new.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -56,10 +47,10 @@ class MumbleController extends Controller
             return $this->redirect($this->generateUrl('mumble_show', array('id' => $entity->getId())));
         }
 
-        return array(
+        return $this->render('DPMumbleServerBundle:Mumble:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        );
+        ));
     }
 
     /**
@@ -84,27 +75,21 @@ class MumbleController extends Controller
     /**
      * Displays a form to create a new Mumble entity.
      *
-     * @Route("/new", name="mumble_new")
-     * @Method("GET")
-     * @Template()
      */
     public function newAction()
     {
         $entity = new Mumble();
         $form   = $this->createCreateForm($entity);
 
-        return array(
+        return $this->render('DPMumbleServerBundle:Mumble:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        );
+        ));
     }
 
     /**
      * Finds and displays a Mumble entity.
      *
-     * @Route("/{id}", name="mumble_show")
-     * @Method("GET")
-     * @Template()
      */
     public function showAction($id)
     {
@@ -118,18 +103,14 @@ class MumbleController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        return $this->render('DPMumbleServerBundle:Mumble:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
+            'delete_form' => $deleteForm->createView(),        ));
     }
 
     /**
      * Displays a form to edit an existing Mumble entity.
      *
-     * @Route("/{id}/edit", name="mumble_edit")
-     * @Method("GET")
-     * @Template()
      */
     public function editAction($id)
     {
@@ -144,11 +125,11 @@ class MumbleController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return array(
+        return $this->render('DPMumbleServerBundle:Mumble:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        );
+        ));
     }
 
     /**
@@ -172,9 +153,6 @@ class MumbleController extends Controller
     /**
      * Edits an existing Mumble entity.
      *
-     * @Route("/{id}", name="mumble_update")
-     * @Method("PUT")
-     * @Template("DPMumbleServerBundle:Mumble:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
@@ -196,17 +174,15 @@ class MumbleController extends Controller
             return $this->redirect($this->generateUrl('mumble_edit', array('id' => $id)));
         }
 
-        return array(
+        return $this->render('DPMumbleServerBundle:Mumble:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        );
+        ));
     }
     /**
      * Deletes a Mumble entity.
      *
-     * @Route("/{id}", name="mumble_delete")
-     * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
     {

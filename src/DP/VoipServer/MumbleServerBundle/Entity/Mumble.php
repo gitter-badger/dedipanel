@@ -4,16 +4,13 @@ namespace DP\VoipServer\MumbleServerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use DP\VoipServer\VoipServerBundle\Entity\VoipServer;
-use DP\Core\MachineBundle\PHPSeclibWrapper\PHPSeclibWrapper;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
- * DP\MumbleServer\MumbleServerBundle\Entity\MumbleServer
+ * DP\VoipServer\MumbleServerBundle\Entity\Mumble
  * 
  * @ORM\Table(name="mumble_server")
- * @ORM\Entity(repositoryClass="DP\MumbleServer\MumbleServerBundle\Entity\MumbleServerRepository")
+ * @ORM\Entity(repositoryClass="DP\VoipServer\MumbleServerBundle\Entity\MumbleRepository")
  */
 class Mumble extends VoipServer
 {
@@ -21,8 +18,10 @@ class Mumble extends VoipServer
      * @var integer portIce
      *
      * @ORM\Column(name="portIce", type="integer")
-     * @Assert\Min(limit=1, message="voipserver.assert.port")
-     * @Assert\Max(limit=65536, message="voipserver.assert.port")
+	   * @Assert\Range(
+     *      min = 1, minMessage = "voipserver.assert.port",
+     *      max = 65536, maxMessage = "voipserver.assert.port"
+     * )
      */
     private $portIce = 6502;
     /**

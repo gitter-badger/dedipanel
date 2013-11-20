@@ -21,8 +21,9 @@
 namespace DP\VoipServer\VoipServerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use DP\Core\MachineBundle\Entity\Machine;
 use Symfony\Component\Validator\Constraints as Assert;
+use DP\Core\MachineBundle\PHPSeclibWrapper\PHPSeclibWrapper;
+use DP\Core\MachineBundle\Entity\Machine;
 
 /**
  * DP\VoipServer\VoipServer\Entity\VoipServer
@@ -31,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="servertype", type="string")
- * @ORM\DiscriminatorMap({"mumble" = "DP\VoipServer\MumbleServerBundle\Entity\MumbleServer"})
+ * @ORM\DiscriminatorMap({"mumble" = "DP\VoipServer\MumbleServerBundle\Entity\Mumble"})
  */
 class VoipServer {
     /**
@@ -44,7 +45,7 @@ class VoipServer {
     private $id;
     
     /**
-     * @ORM\ManyToOne(targetEntity="DP\Core\MachineBundle\Entity\Machine", inversedBy="voipserver")
+     * @ORM\ManyToOne(targetEntity="DP\Core\MachineBundle\Entity\Machine", inversedBy="voipServers")
      * @ORM\JoinColumn(name="machineId", referencedColumnName="id")
      * @Assert\NotNull(message="voipserver.assert.machine")
      */

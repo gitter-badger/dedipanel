@@ -24,6 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use DP\Core\MachineBundle\PHPSeclibWrapper\PHPSeclibWrapper;
 use DP\GameServer\GameServerBundle\Entity\GameServer;
+use DP\VoipServer\VoipServer\Entity\VoipServer;
 
 /**
  * DP\Core\MachineBundle\Entity\Machine
